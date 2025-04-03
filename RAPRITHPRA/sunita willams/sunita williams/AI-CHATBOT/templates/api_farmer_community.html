@@ -1,0 +1,773 @@
+{% extends "api_base.html" %}
+
+{% block title %}EDU SPARK - Farmer Community Hub{% endblock %}
+
+{% block content %}
+<div class="container py-5 animate__animated animate__fadeIn">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="text-center mb-3"><i class="fas fa-users text-primary me-2"></i>Farmer Community Hub</h1>
+            <p class="lead text-center">Connect with fellow farmers, share resources, and grow together</p>
+        </div>
+    </div>
+    
+    <!-- Main feature tabs -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <ul class="nav nav-tabs card-header-tabs" id="communityTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="machinery-tab" data-bs-toggle="tab" data-bs-target="#machinery" type="button" role="tab">
+                                <i class="fas fa-tractor me-2"></i>Machinery Sharing
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="knowledge-tab" data-bs-toggle="tab" data-bs-target="#knowledge" type="button" role="tab">
+                                <i class="fas fa-book me-2"></i>Knowledge Exchange
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="marketplace-tab" data-bs-toggle="tab" data-bs-target="#marketplace" type="button" role="tab">
+                                <i class="fas fa-store me-2"></i>Marketplace
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="support-tab" data-bs-toggle="tab" data-bs-target="#support" type="button" role="tab">
+                                <i class="fas fa-hands-helping me-2"></i>Support Network
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="card-body">
+                    <div class="tab-content" id="communityTabContent">
+                        <!-- Machinery Sharing Tab -->
+                        <div class="tab-pane fade show active" id="machinery" role="tabpanel">
+                            <div class="row mb-4">
+                                <div class="col-md-8">
+                                    <h3>Shared Agricultural Machinery</h3>
+                                    <p>Access expensive agricultural equipment at a fraction of the cost by sharing with farmers in your area. Add your equipment to the pool or request machinery when you need it.</p>
+                                </div>
+                                <div class="col-md-4 text-end">
+                                    <button class="btn btn-primary" id="addMachineryBtn">
+                                        <i class="fas fa-plus me-2"></i>Add Equipment
+                                    </button>
+                                    <button class="btn btn-outline-primary ms-2" id="requestMachineryBtn">
+                                        <i class="fas fa-hand-paper me-2"></i>Request
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Machinery list -->
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <div class="machinery-filters mb-3">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" placeholder="Search machinery...">
+                                            <select class="form-select" style="max-width: 200px;">
+                                                <option selected>All Categories</option>
+                                                <option>Tractors</option>
+                                                <option>Harvesters</option>
+                                                <option>Plows</option>
+                                                <option>Sprayers</option>
+                                                <option>Others</option>
+                                            </select>
+                                            <select class="form-select" style="max-width: 150px;">
+                                                <option selected>Any Distance</option>
+                                                <option>< 5 km</option>
+                                                <option>< 10 km</option>
+                                                <option>< 25 km</option>
+                                                <option>< 50 km</option>
+                                            </select>
+                                            <button class="btn btn-outline-secondary">
+                                                <i class="fas fa-search"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="machinery-list">
+                                        <div class="card mb-3 machinery-item">
+                                            <div class="row g-0">
+                                                <div class="col-md-2">
+                                                    <img src="https://images.unsplash.com/photo-1598978542152-7c8dfe98c371?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=150&w=150" class="img-fluid rounded-start" alt="Tractor">
+                                                </div>
+                                                <div class="col-md-7">
+                                                    <div class="card-body">
+                                                        <h5 class="card-title">John Deere 5E Tractor</h5>
+                                                        <p class="card-text">55 HP utility tractor, perfect for small to medium fields. Available on weekdays.</p>
+                                                        <div class="machinery-meta">
+                                                            <span class="badge bg-success me-2">Available</span>
+                                                            <span class="text-muted me-3"><i class="fas fa-map-marker-alt me-1"></i> 3.5 km away</span>
+                                                            <span class="text-muted"><i class="fas fa-rupee-sign me-1"></i> 1200/day</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3 d-flex align-items-center justify-content-center">
+                                                    <button class="btn btn-primary btn-sm me-2">Book Now</button>
+                                                    <button class="btn btn-outline-secondary btn-sm">Details</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="card mb-3 machinery-item">
+                                            <div class="row g-0">
+                                                <div class="col-md-2">
+                                                    <img src="https://images.unsplash.com/photo-1625526040064-061ca243e92f?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=150&w=150" class="img-fluid rounded-start" alt="Harvester">
+                                                </div>
+                                                <div class="col-md-7">
+                                                    <div class="card-body">
+                                                        <h5 class="card-title">New Holland TC5.30 Harvester</h5>
+                                                        <p class="card-text">Compact harvester with 175 HP engine, suitable for wheat, rice, and barley.</p>
+                                                        <div class="machinery-meta">
+                                                            <span class="badge bg-warning text-dark me-2">Booked until Jul 15</span>
+                                                            <span class="text-muted me-3"><i class="fas fa-map-marker-alt me-1"></i> 12 km away</span>
+                                                            <span class="text-muted"><i class="fas fa-rupee-sign me-1"></i> 3500/day</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3 d-flex align-items-center justify-content-center">
+                                                    <button class="btn btn-primary btn-sm me-2">Reserve</button>
+                                                    <button class="btn btn-outline-secondary btn-sm">Details</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="card mb-3 machinery-item">
+                                            <div class="row g-0">
+                                                <div class="col-md-2">
+                                                    <img src="https://images.unsplash.com/photo-1585689673040-6c59d69b9863?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=150&w=150" class="img-fluid rounded-start" alt="Sprayer">
+                                                </div>
+                                                <div class="col-md-7">
+                                                    <div class="card-body">
+                                                        <h5 class="card-title">Boom Sprayer with 12m Width</h5>
+                                                        <p class="card-text">Agricultural sprayer with 500L tank capacity and adjustable nozzles.</p>
+                                                        <div class="machinery-meta">
+                                                            <span class="badge bg-success me-2">Available</span>
+                                                            <span class="text-muted me-3"><i class="fas fa-map-marker-alt me-1"></i> 7 km away</span>
+                                                            <span class="text-muted"><i class="fas fa-rupee-sign me-1"></i> 800/day</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3 d-flex align-items-center justify-content-center">
+                                                    <button class="btn btn-primary btn-sm me-2">Book Now</button>
+                                                    <button class="btn btn-outline-secondary btn-sm">Details</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="text-center mt-3">
+                                        <button class="btn btn-outline-primary">Load More</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Knowledge Exchange Tab (Placeholder) -->
+                        <div class="tab-pane fade" id="knowledge" role="tabpanel">
+                            <h3 class="mb-4">Knowledge Exchange</h3>
+                            <p class="mb-4">Share your farming expertise and learn from other farmers' experiences.</p>
+                            
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <!-- Forum topics list placeholder -->
+                                    <div class="list-group mb-4">
+                                        <a href="#" class="list-group-item list-group-item-action">
+                                            <div class="d-flex w-100 justify-content-between">
+                                                <h5 class="mb-1">Best practices for organic pest control</h5>
+                                                <small>3 days ago</small>
+                                            </div>
+                                            <p class="mb-1">Sharing methods that have worked well for controlling pests without chemicals...</p>
+                                            <small>23 replies • 142 views</small>
+                                        </a>
+                                        <a href="#" class="list-group-item list-group-item-action">
+                                            <div class="d-flex w-100 justify-content-between">
+                                                <h5 class="mb-1">Water conservation techniques for summer crops</h5>
+                                                <small>1 week ago</small>
+                                            </div>
+                                            <p class="mb-1">Let's discuss effective irrigation methods to reduce water usage...</p>
+                                            <small>17 replies • 95 views</small>
+                                        </a>
+                                        <a href="#" class="list-group-item list-group-item-action">
+                                            <div class="d-flex w-100 justify-content-between">
+                                                <h5 class="mb-1">Soil preparation for winter wheat</h5>
+                                                <small>2 weeks ago</small>
+                                            </div>
+                                            <p class="mb-1">What's your approach to preparing fields for winter wheat planting?</p>
+                                            <small>31 replies • 213 views</small>
+                                        </a>
+                                    </div>
+                                    
+                                    <div class="text-center mt-3">
+                                        <button class="btn btn-outline-primary">View All Topics</button>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    <div class="card">
+                                        <div class="card-header bg-primary text-white">
+                                            <h5 class="mb-0">Start a Discussion</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <form>
+                                                <div class="mb-3">
+                                                    <label for="topicTitle" class="form-label">Topic Title</label>
+                                                    <input type="text" class="form-control" id="topicTitle">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="topicCategory" class="form-label">Category</label>
+                                                    <select class="form-select" id="topicCategory">
+                                                        <option>Crop Management</option>
+                                                        <option>Pest Control</option>
+                                                        <option>Water Management</option>
+                                                        <option>Soil Health</option>
+                                                        <option>Equipment</option>
+                                                        <option>Market Trends</option>
+                                                    </select>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="topicContent" class="form-label">Content</label>
+                                                    <textarea class="form-control" id="topicContent" rows="4"></textarea>
+                                                </div>
+                                                <div class="d-grid">
+                                                    <button type="submit" class="btn btn-primary">Post Topic</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Marketplace Tab (Placeholder) -->
+                        <div class="tab-pane fade" id="marketplace" role="tabpanel">
+                            <h3 class="mb-4">Farmer's Marketplace</h3>
+                            <p>Buy, sell, or trade agricultural products directly with other farmers.</p>
+                            
+                            <div class="row mb-4">
+                                <div class="col-md-8">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" placeholder="Search products...">
+                                        <select class="form-select" style="max-width: 200px;">
+                                            <option selected>All Categories</option>
+                                            <option>Seeds & Plants</option>
+                                            <option>Tools & Equipment</option>
+                                            <option>Produce</option>
+                                            <option>Fertilizers</option>
+                                            <option>Organic Products</option>
+                                        </select>
+                                        <button class="btn btn-outline-primary">
+                                            <i class="fas fa-search"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 text-end">
+                                    <button class="btn btn-primary" id="addListingBtn">
+                                        <i class="fas fa-plus me-2"></i>Add Listing
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Featured listings -->
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h4>Featured Listings</h4>
+                                        <div class="d-flex">
+                                            <div class="btn-group me-2">
+                                                <button class="btn btn-outline-secondary btn-sm active">All</button>
+                                                <button class="btn btn-outline-secondary btn-sm">For Sale</button>
+                                                <button class="btn btn-outline-secondary btn-sm">Wanted</button>
+                                            </div>
+                                            <select class="form-select form-select-sm" style="width: 150px;">
+                                                <option>Sort: Newest</option>
+                                                <option>Sort: Price (Low-High)</option>
+                                                <option>Sort: Price (High-Low)</option>
+                                                <option>Sort: Distance</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <!-- Product Card 1 -->
+                                        <div class="col-md-4 mb-4">
+                                            <div class="card h-100">
+                                                <div class="position-absolute badge bg-success m-2">New</div>
+                                                <img src="https://images.unsplash.com/photo-1585149959492-53fd2ec1284d?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=200&w=350" class="card-img-top" alt="Organic Rice">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">Organic Rice (50kg)</h5>
+                                                    <p class="card-text">Freshly harvested organic rice, perfect for retail or wholesale.</p>
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <span class="text-primary fw-bold">₹2,800</span>
+                                                        <span class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>5 km away</span>
+                                                    </div>
+                                                </div>
+                                                <div class="card-footer bg-white border-top-0">
+                                                    <div class="d-flex justify-content-between">
+                                                        <button class="btn btn-sm btn-outline-primary">Contact Seller</button>
+                                                        <button class="btn btn-sm btn-outline-secondary">
+                                                            <i class="far fa-bookmark"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Product Card 2 -->
+                                        <div class="col-md-4 mb-4">
+                                            <div class="card h-100">
+                                                <img src="https://images.unsplash.com/photo-1655185497004-f3018eee43f9?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=200&w=350" class="card-img-top" alt="Tractor attachment">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">Tractor Plough Attachment</h5>
+                                                    <p class="card-text">Slightly used plough attachment compatible with most standard tractors.</p>
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <span class="text-primary fw-bold">₹17,500</span>
+                                                        <span class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>12 km away</span>
+                                                    </div>
+                                                </div>
+                                                <div class="card-footer bg-white border-top-0">
+                                                    <div class="d-flex justify-content-between">
+                                                        <button class="btn btn-sm btn-outline-primary">Contact Seller</button>
+                                                        <button class="btn btn-sm btn-outline-secondary">
+                                                            <i class="far fa-bookmark"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Product Card 3 -->
+                                        <div class="col-md-4 mb-4">
+                                            <div class="card h-100">
+                                                <div class="position-absolute badge bg-warning text-dark m-2">Wanted</div>
+                                                <img src="https://images.unsplash.com/photo-1603558431750-dfa11391d890?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=200&w=350" class="card-img-top" alt="Vegetable Seeds">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">Looking for Vegetable Seeds</h5>
+                                                    <p class="card-text">Interested in purchasing organic tomato, cucumber, and chili seeds in bulk.</p>
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <span class="text-primary fw-bold">Price Negotiable</span>
+                                                        <span class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>Local</span>
+                                                    </div>
+                                                </div>
+                                                <div class="card-footer bg-white border-top-0">
+                                                    <div class="d-flex justify-content-between">
+                                                        <button class="btn btn-sm btn-outline-primary">Contact Buyer</button>
+                                                        <button class="btn btn-sm btn-outline-secondary">
+                                                            <i class="far fa-bookmark"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="text-center mt-3">
+                                        <button class="btn btn-outline-primary">See All Listings</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Recent activity -->
+                            <div class="card mt-4">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Recent Marketplace Activity</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="list-group">
+                                        <div class="list-group-item">
+                                            <div class="d-flex w-100 justify-content-between">
+                                                <h6 class="mb-1">Rajesh K. listed "Organic Fertilizer (20 bags)"</h6>
+                                                <small>3 hours ago</small>
+                                            </div>
+                                            <small class="text-muted">Price: ₹12,000</small>
+                                        </div>
+                                        <div class="list-group-item">
+                                            <div class="d-flex w-100 justify-content-between">
+                                                <h6 class="mb-1">Anita S. is looking for "Wheat Seeds for Rabi Season"</h6>
+                                                <small>Yesterday</small>
+                                            </div>
+                                            <small class="text-muted">Budget: ₹10,000</small>
+                                        </div>
+                                        <div class="list-group-item">
+                                            <div class="d-flex w-100 justify-content-between">
+                                                <h6 class="mb-1">Mahesh P. sold "John Deere Tractor Parts"</h6>
+                                                <small>2 days ago</small>
+                                            </div>
+                                            <small class="text-success">Transaction completed</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Support Network Tab (Placeholder) -->
+                        <div class="tab-pane fade" id="support" role="tabpanel">
+                            <h3 class="mb-4">Community Support Network</h3>
+                            <p>Connect with support resources and help fellow farmers in need.</p>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-4">
+                                    <div class="card h-100">
+                                        <div class="card-header bg-success text-white">
+                                            <h5 class="mb-0"><i class="fas fa-hand-holding-heart me-2"></i>Assistance Programs</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="list-group">
+                                                <a href="#" class="list-group-item list-group-item-action">
+                                                    <div class="d-flex w-100 justify-content-between">
+                                                        <h6 class="mb-1">Drought Relief Support</h6>
+                                                        <span class="badge bg-primary">Active</span>
+                                                    </div>
+                                                    <p class="mb-1">Resources and support for farmers affected by the recent drought.</p>
+                                                    <small class="text-muted">12 farmers currently receiving assistance</small>
+                                                </a>
+                                                <a href="#" class="list-group-item list-group-item-action">
+                                                    <div class="d-flex w-100 justify-content-between">
+                                                        <h6 class="mb-1">Emergency Equipment Sharing</h6>
+                                                        <span class="badge bg-primary">Active</span>
+                                                    </div>
+                                                    <p class="mb-1">Access to essential equipment during emergencies.</p>
+                                                    <small class="text-muted">5 equipment units available</small>
+                                                </a>
+                                                <a href="#" class="list-group-item list-group-item-action">
+                                                    <div class="d-flex w-100 justify-content-between">
+                                                        <h6 class="mb-1">Harvest Assistance Team</h6>
+                                                        <span class="badge bg-warning text-dark">Forming</span>
+                                                    </div>
+                                                    <p class="mb-1">Volunteer team to help with harvest during labor shortages.</p>
+                                                    <small class="text-muted">Seeking 8 more volunteers</small>
+                                                </a>
+                                            </div>
+                                            
+                                            <div class="d-grid gap-2 mt-3">
+                                                <button class="btn btn-outline-success">Request Support</button>
+                                                <button class="btn btn-outline-primary">Offer Help</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6 mb-4">
+                                    <div class="card h-100">
+                                        <div class="card-header bg-info text-white">
+                                            <h5 class="mb-0"><i class="fas fa-bullhorn me-2"></i>Emergency Alerts</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="alert alert-warning">
+                                                <h6 class="alert-heading"><i class="fas fa-exclamation-triangle me-2"></i>Heavy Rain Warning</h6>
+                                                <p class="mb-1">Expected heavy rainfall in coastal districts over the next 72 hours. Secure your crops and equipment.</p>
+                                                <small>Posted 12 hours ago · Valid until June 15</small>
+                                            </div>
+                                            
+                                            <div class="alert alert-info">
+                                                <h6 class="alert-heading"><i class="fas fa-info-circle me-2"></i>Government Subsidy Update</h6>
+                                                <p class="mb-1">New subsidy program for organic farmers announced. Application deadline July 10.</p>
+                                                <small>Posted 2 days ago · Valid until July 10</small>
+                                            </div>
+                                            
+                                            <h6 class="mt-4 mb-3">Your Alert Settings</h6>
+                                            <div class="form-check form-switch mb-2">
+                                                <input class="form-check-input" type="checkbox" id="weatherAlerts" checked>
+                                                <label class="form-check-label" for="weatherAlerts">Weather Alerts</label>
+                                            </div>
+                                            <div class="form-check form-switch mb-2">
+                                                <input class="form-check-input" type="checkbox" id="marketAlerts" checked>
+                                                <label class="form-check-label" for="marketAlerts">Market Price Alerts</label>
+                                            </div>
+                                            <div class="form-check form-switch mb-2">
+                                                <input class="form-check-input" type="checkbox" id="govtAlerts" checked>
+                                                <label class="form-check-label" for="govtAlerts">Government Program Alerts</label>
+                                            </div>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="communityAlerts" checked>
+                                                <label class="form-check-label" for="communityAlerts">Community Support Alerts</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-12 mb-4">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5 class="mb-0"><i class="fas fa-users me-2"></i>Community Assistance Map</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="ratio ratio-21x9 mb-3">
+                                                <img src="https://images.unsplash.com/photo-1604357209793-fca5dca89f97?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=400&w=900" class="img-fluid rounded" alt="Map of support resources">
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-8">
+                                                    <p>This map shows active community support initiatives in your area. Click on a marker to view details and contact information.</p>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="d-grid gap-2">
+                                                        <button class="btn btn-primary">Add My Initiative</button>
+                                                        <button class="btn btn-outline-secondary">Filter Map</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Success Stories -->
+                            <div class="row mt-2">
+                                <div class="col-12">
+                                    <h4 class="mb-3">Success Stories</h4>
+                                </div>
+                                <div class="col-md-4 mb-4">
+                                    <div class="card h-100">
+                                        <img src="https://images.unsplash.com/photo-1591672398493-bece44944ebd?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=200&w=350" class="card-img-top" alt="Community support">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Flood Recovery Effort</h5>
+                                            <p class="card-text">20 farmers helped rebuild irrigation systems after monsoon flooding last season.</p>
+                                        </div>
+                                        <div class="card-footer bg-transparent">
+                                            <small class="text-muted">3 months ago</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-4">
+                                    <div class="card h-100">
+                                        <img src="https://images.unsplash.com/photo-1629732886036-dd3549ecfa68?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=200&w=350" class="card-img-top" alt="Equipment sharing">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Equipment Sharing Initiative</h5>
+                                            <p class="card-text">Cooperative purchasing helped 15 small farmers access modern equipment.</p>
+                                        </div>
+                                        <div class="card-footer bg-transparent">
+                                            <small class="text-muted">5 months ago</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-4">
+                                    <div class="card h-100">
+                                        <img src="https://images.unsplash.com/photo-1593499910534-1e25003195cc?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=200&w=350" class="card-img-top" alt="Seed exchange">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Seed Exchange Program</h5>
+                                            <p class="card-text">Community seed bank helped preserve traditional varieties and improve crop diversity.</p>
+                                        </div>
+                                        <div class="card-footer bg-transparent">
+                                            <small class="text-muted">7 months ago</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- How it works section -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <h2 class="text-center mb-4">How It Works</h2>
+        </div>
+        
+        <div class="col-md-3 mb-4">
+            <div class="card h-100 text-center">
+                <div class="card-body">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-user-plus fa-3x text-primary"></i>
+                    </div>
+                    <h5 class="card-title">Create Profile</h5>
+                    <p class="card-text">Sign up and create your farmer profile with details about your farm and needs.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-4">
+            <div class="card h-100 text-center">
+                <div class="card-body">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-search fa-3x text-primary"></i>
+                    </div>
+                    <h5 class="card-title">Find Resources</h5>
+                    <p class="card-text">Search for available machinery, knowledge resources, or market opportunities.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-4">
+            <div class="card h-100 text-center">
+                <div class="card-body">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-handshake fa-3x text-primary"></i>
+                    </div>
+                    <h5 class="card-title">Connect</h5>
+                    <p class="card-text">Reach agreements with other farmers through our secure messaging system.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-4">
+            <div class="card h-100 text-center">
+                <div class="card-body">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-star fa-3x text-primary"></i>
+                    </div>
+                    <h5 class="card-title">Rate & Review</h5>
+                    <p class="card-text">Build trust in the community by rating and reviewing your experiences.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Machinery Sharing Modal -->
+<div class="modal fade" id="addMachineryModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">Add Equipment for Sharing</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addMachineryForm">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="machineryName" class="form-label">Equipment Name</label>
+                            <input type="text" class="form-control" id="machineryName" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="machineryCategory" class="form-label">Category</label>
+                            <select class="form-select" id="machineryCategory" required>
+                                <option value="">Select category</option>
+                                <option>Tractor</option>
+                                <option>Harvester</option>
+                                <option>Plow</option>
+                                <option>Sprayer</option>
+                                <option>Seeder</option>
+                                <option>Irrigation</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="machineryDescription" class="form-label">Description</label>
+                        <textarea class="form-control" id="machineryDescription" rows="3" required></textarea>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="machineryRate" class="form-label">Daily Rate (₹)</label>
+                            <input type="number" class="form-control" id="machineryRate" min="0" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="machineryLocation" class="form-label">Location</label>
+                            <input type="text" class="form-control" id="machineryLocation" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="machineryAvailability" class="form-label">Availability</label>
+                        <select class="form-select" id="machineryAvailability" required>
+                            <option>Weekdays only</option>
+                            <option>Weekends only</option>
+                            <option>All days</option>
+                            <option>Seasonal (specify in description)</option>
+                            <option>Custom schedule</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="machineryPhoto" class="form-label">Upload Photo</label>
+                        <input type="file" class="form-control" id="machineryPhoto" accept="image/*">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="saveMachineryBtn">Add Equipment</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .machinery-item {
+        transition: transform 0.2s;
+        border-left: 5px solid transparent;
+    }
+    
+    .machinery-item:hover {
+        transform: translateX(5px);
+        border-left-color: var(--primary-color);
+    }
+    
+    .machinery-meta {
+        display: flex;
+        align-items: center;
+        margin-top: 10px;
+    }
+    
+    .feature-icon {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto;
+        background-color: rgba(76, 175, 80, 0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .nav-tabs .nav-link {
+        color: var(--dark-color);
+    }
+    
+    .nav-tabs .nav-link.active {
+        color: var(--primary-color);
+        font-weight: 500;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize the machinery sharing modal
+        const addMachineryBtn = document.getElementById('addMachineryBtn');
+        const addMachineryModal = new bootstrap.Modal(document.getElementById('addMachineryModal'));
+        
+        if (addMachineryBtn) {
+            addMachineryBtn.addEventListener('click', function() {
+                addMachineryModal.show();
+            });
+        }
+        
+        // Handle machinery form submission
+        const saveMachineryBtn = document.getElementById('saveMachineryBtn');
+        if (saveMachineryBtn) {
+            saveMachineryBtn.addEventListener('click', function() {
+                const form = document.getElementById('addMachineryForm');
+                if (form.checkValidity()) {
+                    // In a real application, this would submit the form data to the server
+                    alert('Equipment added successfully! (Demo only - no actual submission)');
+                    addMachineryModal.hide();
+                } else {
+                    form.reportValidity();
+                }
+            });
+        }
+        
+        // Handle tab navigation via URL hash
+        const hash = window.location.hash;
+        if (hash) {
+            const tab = document.querySelector(`#communityTabs button[data-bs-target="${hash}"]`);
+            if (tab) {
+                const tabInstance = new bootstrap.Tab(tab);
+                tabInstance.show();
+            }
+        }
+    });
+</script>
+{% endblock %} 
