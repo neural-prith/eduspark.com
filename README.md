@@ -1,5 +1,3 @@
----
-
 # 🌱 EduSpark - Empowering Rural Futures with AI 🌾
 
 **EduSpark** is a full-stack AI-powered web application built to bridge the **digital divide** and empower **rural communities** through **context-aware technologies**, **agri-support**, and **accessible education**.
