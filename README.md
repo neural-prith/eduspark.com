@@ -1,5 +1,3 @@
-Sure! Here's a **README-style** document for your EduSpark project that presents all the information in a clean, structured, and developer-friendly format:
-
 ---
 
 # 🌱 EduSpark - Empowering Rural Futures with AI 🌾
