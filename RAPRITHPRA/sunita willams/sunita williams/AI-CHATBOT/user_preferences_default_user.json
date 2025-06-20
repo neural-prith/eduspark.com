@@ -1,8 +1,9 @@
 {
   "language": "en",
-  "voice_enabled": true,
-  "difficulty_level": "medium",
-  "learning_path": null,
   "response_length": "concise",
-  "voice_wake_word": "iti"
+  "difficulty_level": "medium",
+  "voice_enabled": true,
+  "voice_wake_word": "iti",
+  "theme": "default",
+  "learning_path": null
 }

@@ -40,6 +40,9 @@ from core.voice_manager import VoiceInteractionManager  # Import from core/voice
 from core.plant_disease_detector import PlantDiseaseDetector  # Import the plant disease detector
 from core.market_predictor import MarketPredictor  # Import market predictor
 
+# Import farmer personas
+from farmer_personas import IndianFarmerPersonas
+
 # Initialize colorama for cross-platform colored terminal output
 colorama.init()
 
@@ -51,7 +54,9 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 if not GEMINI_API_KEY:
     print(f"{Fore.RED}Error: GEMINI_API_KEY not found in environment variables.{Style.RESET_ALL}")
     print("Please add your Gemini API key to the .env file.")
-    sys.exit(1)
+    print("Get a free API key from: https://ai.google.dev/")
+    # Don't exit, allow the app to run without Gemini features
+    GEMINI_API_KEY = None
 
 # Check for YouTube API key
 YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY")
@@ -61,10 +66,40 @@ if not YOUTUBE_API_KEY:
 # Try to import Google Generative AI
 try:
     import google.generativeai as genai
+    GEMINI_AVAILABLE = True
 except ImportError:
-    print(f"{Fore.RED}Error: google.generativeai package not found.{Style.RESET_ALL}")
-    print("Please run: pip install google-generativeai==0.3.1")
-    sys.exit(1)
+    print(f"{Fore.YELLOW}Warning: google.generativeai package not found.{Style.RESET_ALL}")
+    print("To enable Gemini features, run: pip install google-generativeai")
+    GEMINI_AVAILABLE = False
+
+# Rate limiting for API calls
+import threading
+from collections import defaultdict, deque
+
+class RateLimiter:
+    def __init__(self):
+        self.requests = defaultdict(deque)
+        self.lock = threading.Lock()
+    
+    def can_make_request(self, api_key, requests_per_minute=15):
+        """Check if a request can be made based on rate limits."""
+        with self.lock:
+            now = time.time()
+            window_start = now - 60  # 1 minute window
+            
+            # Remove old requests
+            while (self.requests[api_key] and 
+                   self.requests[api_key][0] < window_start):
+                self.requests[api_key].popleft()
+            
+            # Check if we can make a request
+            if len(self.requests[api_key]) < requests_per_minute:
+                self.requests[api_key].append(now)
+                return True
+            return False
+
+# Global rate limiter
+rate_limiter = RateLimiter()
 
 # Constants
 CONVERSATION_HISTORY_PATH = "conversation_history.json"
@@ -1302,77 +1337,109 @@ class ChatBot:
     """AI Chatbot with continuous learning capabilities."""
 
     def __init__(self, continuous_learning=False, user_id="default_user"):
-        """Initialize chatbot with optional continuous learning.
-
-        Args:
-            continuous_learning: Whether to enable continuous learning mode
-            user_id: Unique identifier for the user
-        """
+        """Initialize the chatbot with enhanced features."""
+        # Initialize all components first
         self.user_id = user_id
         self.continuous_learning = continuous_learning
-        self.conversation_history = []
-        self.qa_dataset = []
+        self.gemini_model = False
         self.model = None
+        self.current_model_name = "Unknown"  # Track which model is being used
+        self.safety_settings = []
+        
+        # Initialize learning statistics
+        self.learning_stats = {
+            "responses_generated": 0,
+            "context_items_added": 0,
+            "dataset_growth": [],
+            "performance_metrics": {},
+            "last_context_update": None,
+            "model_accuracy": {"correct": 0, "total": 0}
+        }
+        
+        # Initialize components
         self.context_model = ContextualModel()
-        self.youtube_manager = YouTubeResourceManager(api_key=YOUTUBE_API_KEY)
+        self.youtube_manager = YouTubeResourceManager(YOUTUBE_API_KEY)
         self.multilingual = MultilingualSupport()
-        self.progress_tracker = ProgressTracker(user_id=user_id)
+        self.progress_tracker = ProgressTracker(user_id)
         self.study_material_generator = StudyMaterialGenerator()
         self.quiz_manager = QuizManager()
         self.voice_manager = VoiceInteractionManager()
-        self.plant_disease_detector = PlantDiseaseDetector()  # Initialize plant disease detector
-        self.market_predictor = MarketPredictor()  # Initialize market predictor
-        self.ITI_TOPICS= ITI_TOPICS
-        # Load user preferences
+        
+        # Initialize Indian Farmer Personas
+        self.farmer_personas = IndianFarmerPersonas()
+        
+        # Initialize plant disease detector
+        try:
+            self.plant_disease_detector = PlantDiseaseDetector()
+        except Exception as e:
+            print(f"{Fore.YELLOW}Plant disease detector initialization failed: {e}{Style.RESET_ALL}")
+            self.plant_disease_detector = None
+        
+        # Initialize market predictor
+        try:
+            self.market_predictor = MarketPredictor()
+        except Exception as e:
+            print(f"{Fore.YELLOW}Market predictor initialization failed: {e}{Style.RESET_ALL}")
+            self.market_predictor = None
+        
+        # Load user preferences and data
+        self._load_user_preferences()
+        self._load_qa_dataset()
+        self._load_conversation_history()
+        
+        # Setup the AI model
+        self._setup_gemini_model()
+        
+        print(f"{Fore.GREEN}✓ ChatBot initialized for user: {user_id}{Style.RESET_ALL}")
+        if self.gemini_model:
+            print(f"{Fore.GREEN}✓ AI capabilities enabled with model: {self.current_model_name}{Style.RESET_ALL}")
+        else:
+            print(f"{Fore.YELLOW}⚠ AI capabilities limited - check API configuration{Style.RESET_ALL}")
+
+    def _load_user_preferences(self):
+        """Load user preferences from file."""
+        # Set default preferences
         self.user_preferences = {
             "language": "en",
             "response_length": "medium",  # concise, medium, detailed
             "difficulty_level": "medium",  # easy, medium, hard
             "voice_enabled": False,
             "voice_wake_word": "assistant",
-            "theme": "default"
+            "theme": "default",
+            "farmer_persona": "auto",  # auto, experienced_traditional, tech_savvy_modern, small_scale_organic, young_entrepreneur, southern_progressive
+            "farming_region": "general",  # general, north, south, west, east, central
+            "primary_crops": [],  # user's main crops
+            "farming_style": "mixed"  # traditional, modern, organic, commercial, mixed
         }
         
         # Customize file paths based on user_id
-        self.conversation_history_path = f"conversation_history_{user_id}.json"
-        self.user_preferences_path = f"user_preferences_{user_id}.json"
+        self.conversation_history_path = f"conversation_history_{self.user_id}.json"
+        self.user_preferences_path = f"user_preferences_{self.user_id}.json"
         
-        self._load_user_preferences()
-        self._setup_gemini_model()
-        self._load_conversation_history()
-        
-        if continuous_learning:
-            self._load_qa_dataset()
-            print(f"{Fore.GREEN}Continuous learning mode enabled. Learning from context and history.{Style.RESET_ALL}")
-
-    def _load_user_preferences(self):
-        """Load user preferences from file if available."""
         try:
-            preferences_path = f"user_preferences_{self.user_id}.json"
-            if os.path.exists(preferences_path):
-                with open(preferences_path, 'r', encoding='utf-8') as f:
-                    self.user_preferences = json.load(f)
-                print(f"{Fore.GREEN}✓ Loaded preferences for user {self.user_id}{Style.RESET_ALL}")
+            if os.path.exists(self.user_preferences_path):
+                with open(self.user_preferences_path, 'r', encoding='utf-8') as f:
+                    saved_preferences = json.load(f)
+                    self.user_preferences.update(saved_preferences)
+                print(f"{Fore.GREEN}✓ Loaded user preferences{Style.RESET_ALL}")
         except Exception as e:
             print(f"{Fore.YELLOW}Could not load user preferences: {e}{Style.RESET_ALL}")
-            # Keep default preferences
 
     def _save_user_preferences(self):
         """Save user preferences to file."""
         try:
-            preferences_path = f"user_preferences_{self.user_id}.json"
-            with open(preferences_path, 'w', encoding='utf-8') as f:
+            with open(self.user_preferences_path, 'w', encoding='utf-8') as f:
                 json.dump(self.user_preferences, f, ensure_ascii=False, indent=2)
         except Exception as e:
             print(f"{Fore.YELLOW}Could not save user preferences: {e}{Style.RESET_ALL}")
 
     def _load_qa_dataset(self):
-        """Load the QA dataset from file if available."""
+        """Load the QA dataset for continuous learning."""
         try:
             if os.path.exists(QA_DATASET_PATH):
                 with open(QA_DATASET_PATH, 'r', encoding='utf-8') as f:
                     self.qa_dataset = json.load(f)
-                print(f"{Fore.GREEN}✓ Loaded QA dataset with {len(self.qa_dataset)} examples{Style.RESET_ALL}")
+                print(f"{Fore.GREEN}✓ Loaded QA dataset with {len(self.qa_dataset)} entries{Style.RESET_ALL}")
             else:
                 self.qa_dataset = []
         except Exception as e:
@@ -1380,7 +1447,7 @@ class ChatBot:
             self.qa_dataset = []
 
     def _save_qa_dataset(self):
-        """Save the QA dataset to file."""
+        """Save the QA dataset."""
         try:
             with open(QA_DATASET_PATH, 'w', encoding='utf-8') as f:
                 json.dump(self.qa_dataset, f, ensure_ascii=False, indent=2)
@@ -1391,50 +1458,76 @@ class ChatBot:
         """Configure the Gemini AI model."""
         try:
             # Check if the google-generativeai package is installed
-            try:
-                import google.generativeai as genai
-            except ImportError:
-                print(f"{Fore.RED}The 'google-generativeai' package is not installed. Please install it with 'pip install google-generativeai'.{Style.RESET_ALL}")
+            if not GEMINI_AVAILABLE:
+                print(f"{Fore.YELLOW}Gemini API is not available. Install google-generativeai to enable AI features.{Style.RESET_ALL}")
                 self.gemini_model = False
                 return
                 
             # Check if API key is available
             if not GEMINI_API_KEY:
-                print(f"{Fore.RED}Gemini API key is not set. Please set the GEMINI_API_KEY environment variable.{Style.RESET_ALL}")
+                print(f"{Fore.YELLOW}Gemini API key is not set. Please set the GEMINI_API_KEY environment variable.{Style.RESET_ALL}")
+                print(f"{Fore.CYAN}Get a free API key from: https://ai.google.dev/gemini-api{Style.RESET_ALL}")
                 self.gemini_model = False
                 return
                 
             genai.configure(api_key=GEMINI_API_KEY)
+            
+            # Updated generation config for better free tier usage
             generation_config = {
-                "temperature": 0.8,  # Balanced between creativity and consistency
-                "top_p": 0.95,      # Slightly increased for more diverse responses
-                "top_k": 40,        # Keep top 40 tokens for sampling
-                "max_output_tokens": 2096,  # Increased for longer responses
-                "candidate_count": 1,  # Number of response candidates to generate
+                "temperature": 0.7,  # Slightly lower for more consistent responses
+                "top_p": 0.9,       # Reduced for better quality
+                "top_k": 32,        # Reduced to save tokens
+                "max_output_tokens": 1024,  # Reduced for free tier limits
+                "candidate_count": 1,
             }
             
-            # Use gemini-1.5-pro which has better multimodal support
-            # The flash-lite model doesn't fully support image inputs correctly
-            try:
-                # First try to use gemini-1.5-pro which has excellent multimodal support
-                model_name = "gemini-1.5-pro"
-                self.model = genai.GenerativeModel(model_name=model_name, 
-                                                generation_config=generation_config)
-                print(f"{Fore.GREEN}✓ Successfully configured Gemini model: {model_name}{Style.RESET_ALL}")
-            except Exception as model_err:
-                print(f"{Fore.YELLOW}Could not initialize primary model, trying fallback: {str(model_err)}{Style.RESET_ALL}")
-                # Fall back to gemini-pro if 1.5 isn't available
+            # List of free models to try (in order of preference)
+            free_models = [
+                "gemini-2.0-flash-lite",    # Most cost-effective
+                "gemini-2.0-flash",         # Good balance
+                "gemini-1.5-flash",         # Widely available
+                "gemini-1.5-flash-8b",      # Lower cost alternative
+                "gemini-pro"                # Fallback option
+            ]
+            
+            model_initialized = False
+            
+            for model_name in free_models:
                 try:
-                    fallback_model = "gemini-pro"
-                    self.model = genai.GenerativeModel(model_name=fallback_model, 
-                                                    generation_config=generation_config)
-                    print(f"{Fore.GREEN}✓ Successfully configured fallback Gemini model: {fallback_model}{Style.RESET_ALL}")
-                except Exception as fallback_err:
-                    print(f"{Fore.RED}Failed to initialize Gemini models: {str(fallback_err)}{Style.RESET_ALL}")
+                    print(f"{Fore.CYAN}Trying to initialize model: {model_name}{Style.RESET_ALL}")
+                    
+                    # Test the model with a simple request
+                    test_model = genai.GenerativeModel(
+                        model_name=model_name, 
+                        generation_config=generation_config
+                    )
+                    
+                    # Make a test request to verify the model works
+                    test_response = test_model.generate_content("Hi")
+                    
+                    if test_response and test_response.text:
+                        self.model = test_model
+                        self.current_model_name = model_name
+                print(f"{Fore.GREEN}✓ Successfully configured Gemini model: {model_name}{Style.RESET_ALL}")
+                        model_initialized = True
+                        break
+                        
+            except Exception as model_err:
+                    print(f"{Fore.YELLOW}Model {model_name} failed: {str(model_err)}{Style.RESET_ALL}")
+                    continue
+            
+            if not model_initialized:
+                print(f"{Fore.RED}Failed to initialize any Gemini model. Please check your API key and quota.{Style.RESET_ALL}")
+                print(f"{Fore.CYAN}Tips:{Style.RESET_ALL}")
+                print(f"1. Get a new API key from: https://ai.google.dev/gemini-api")
+                print(f"2. Check your quota at: https://ai.google.dev/gemini-api/docs/rate-limits")
+                print(f"3. Wait a few minutes if you've exceeded rate limits")
                     self.gemini_model = False
                     return
             
             self.gemini_model = True
+            
+            # Updated safety settings
             self.safety_settings = [
                 {
                     "category": "HARM_CATEGORY_HARASSMENT",
@@ -1454,9 +1547,15 @@ class ChatBot:
                 },
             ]
             
-            print(f"{Fore.GREEN}✓ Successfully configured Gemini API{Style.RESET_ALL}")
+            print(f"{Fore.GREEN}✓ Successfully configured Gemini API with model: {self.current_model_name}{Style.RESET_ALL}")
+            
         except Exception as e:
             print(f"{Fore.RED}Error configuring Gemini API: {str(e)}{Style.RESET_ALL}")
+            print(f"{Fore.CYAN}Troubleshooting steps:{Style.RESET_ALL}")
+            print(f"1. Verify your API key is correct")
+            print(f"2. Check if you have exceeded free tier limits")
+            print(f"3. Ensure you have internet connectivity")
+            print(f"4. Try again in a few minutes")
             self.gemini_model = False
 
     def _load_conversation_history(self) -> None:
@@ -1743,14 +1842,155 @@ class ChatBot:
             if not self.gemini_model or not self.model:
                 return "Gemini model is not available. Please check your API key and configuration."
                 
-            # Text-only generation
-            print("Generating with Gemini (text-only)")
-            response = self.model.generate_content(model_input)
-            return response.text
+            # Check rate limits before making request
+            if not rate_limiter.can_make_request(GEMINI_API_KEY, requests_per_minute=15):
+                return "Rate limit exceeded. Please wait a moment before making another request."
+            
+            # Get persona-based context for Indian farmers
+            persona_context = self._get_farmer_persona_context(model_input)
+            
+            # Enhance model input with persona context
+            enhanced_input = self._enhance_input_with_persona(model_input, persona_context)
+            
+            # Text-only generation with retry logic
+            print(f"Generating with Gemini ({getattr(self, 'current_model_name', 'unknown model')}) using {persona_context['persona_info']['name']}")
+            
+            max_retries = 3
+            retry_delay = 1  # Start with 1 second delay
+            
+            for attempt in range(max_retries):
+                try:
+                    response = self.model.generate_content(
+                        enhanced_input,
+                        safety_settings=self.safety_settings
+                    )
+                    
+                    if response and response.text:
+                        # Post-process response with persona characteristics
+                        final_response = self._post_process_with_persona(response.text, persona_context)
+                        return final_response
+                    else:
+                        return "I received an empty response. Please try rephrasing your question."
+                        
+                except Exception as api_err:
+                    error_str = str(api_err).lower()
+                    
+                    # Handle quota exceeded errors
+                    if "quota" in error_str or "429" in error_str:
+                        if attempt < max_retries - 1:
+                            wait_time = retry_delay * (2 ** attempt)  # Exponential backoff
+                            print(f"{Fore.YELLOW}Quota exceeded, waiting {wait_time} seconds before retry...{Style.RESET_ALL}")
+                            time.sleep(wait_time)
+                            continue
+                        else:
+                            return (
+                                "I'm currently experiencing high demand and have reached my rate limits. "
+                                "Please try again in a few minutes. You can also:\n"
+                                "1. Get a new API key from https://ai.google.dev/gemini-api\n"
+                                "2. Wait 1-2 minutes for rate limits to reset\n"
+                                "3. Try using shorter, simpler questions"
+                            )
+                    
+                    # Handle safety filter blocks
+                    elif "safety" in error_str or "blocked" in error_str:
+                        return (
+                            "I couldn't generate a response due to safety guidelines. "
+                            "Please try rephrasing your question in a different way."
+                        )
+                    
+                    # Handle model availability issues
+                    elif "model" in error_str or "not found" in error_str:
+                        return (
+                            "The AI model is temporarily unavailable. "
+                            "Please try again in a few minutes or contact support if the issue persists."
+                        )
+                    
+                    # Handle general API errors
+                    else:
+                        if attempt < max_retries - 1:
+                            wait_time = retry_delay * (2 ** attempt)
+                            print(f"{Fore.YELLOW}API error, retrying in {wait_time} seconds...{Style.RESET_ALL}")
+                            time.sleep(wait_time)
+                            continue
+                        else:
+                            return f"I'm having trouble generating a response. Error: {str(api_err)}"
+            
+            return "Unable to generate response after multiple attempts. Please try again later."
+            
         except Exception as e:
-            print(f"Error generating with Gemini: {str(e)}")
-            # Return a fallback response
-            return f"I'm having trouble generating a response at the moment. Error: {str(e)}"
+            print(f"Unexpected error in _generate_with_gemini: {str(e)}")
+            return f"I encountered an unexpected error: {str(e)}. Please try again."
+
+    def _get_farmer_persona_context(self, query: str) -> Dict:
+        """Get appropriate farmer persona context for the query."""
+        
+        # Create context based on user preferences and query
+        context = {
+            "farming_region": self.user_preferences.get("farming_region", "general"),
+            "primary_crops": self.user_preferences.get("primary_crops", []),
+            "farming_style": self.user_preferences.get("farming_style", "mixed"),
+            "language": self.user_preferences.get("language", "en")
+        }
+        
+        # Get persona response
+        persona_type = self.user_preferences.get("farmer_persona", "auto")
+        persona_response = self.farmer_personas.get_persona_response(query, persona_type, context)
+        
+        return persona_response
+
+    def _enhance_input_with_persona(self, model_input: str, persona_context: Dict) -> str:
+        """Enhance the model input with persona-specific context for Indian farmers."""
+        
+        persona_info = persona_context["persona_info"]
+        
+        enhanced_prompt = f"""
+You are an AI assistant helping Indian farmers. Respond as {persona_info['name']}, an experienced farmer from {persona_info['region']} with {persona_info['experience']} of farming experience.
+
+Key characteristics:
+- Specializes in: {', '.join(persona_info['specialization'])}
+- Understands Indian farming culture, festivals, and seasonal practices
+- Knows about government schemes like PM-KISAN, Fasal Bima, Soil Health Card
+- Familiar with both traditional and modern farming methods
+- Speaks in a mix of Hindi and English as appropriate for Indian farmers
+- Provides practical, actionable advice suitable for Indian conditions
+
+Cultural context: {persona_context.get('cultural_touch', '')}
+Practical tip: {persona_context.get('practical_tip', '')}
+Seasonal advice: {persona_context.get('seasonal_advice', '')}
+
+User's question: {model_input}
+
+Please respond in a helpful, culturally appropriate manner that an experienced Indian farmer would appreciate. Include relevant references to:
+- Government schemes if applicable
+- Seasonal considerations
+- Regional farming practices
+- Traditional wisdom combined with modern techniques
+- Practical cost-effective solutions
+
+Keep the response practical, encouraging, and culturally sensitive to Indian farming communities.
+"""
+        
+        return enhanced_prompt
+
+    def _post_process_with_persona(self, response: str, persona_context: Dict) -> str:
+        """Post-process the response to add persona-specific elements."""
+        
+        persona_info = persona_context["persona_info"]
+        
+        # Add persona signature
+        response_with_persona = f"{response}\n\n"
+        response_with_persona += f"- {persona_info['name']} ({persona_info['region']})\n"
+        response_with_persona += f"  {persona_info['experience']} अनुभव | विशेषज्ञता: {', '.join(persona_info['specialization'][:2])}\n"
+        
+        # Add practical tip if relevant
+        if persona_context.get('practical_tip'):
+            response_with_persona += f"\n💡 **प्रैक्टिकल टिप:** {persona_context['practical_tip']}\n"
+        
+        # Add seasonal advice if relevant
+        if persona_context.get('seasonal_advice'):
+            response_with_persona += f"\n🌾 **मौसमी सलाह:** {persona_context['seasonal_advice']}\n"
+        
+        return response_with_persona
     
     def _get_educational_context(self, query):
         """Get educational context relevant to the query.
@@ -2392,6 +2632,128 @@ class ChatBot:
         )
         
         return "\n".join(response)
+
+    def set_farmer_persona(self, persona_type: str, farming_region: str = None, primary_crops: List[str] = None, farming_style: str = None):
+        """Set the farmer persona and related preferences.
+        
+        Args:
+            persona_type: Type of persona (auto, experienced_traditional, tech_savvy_modern, etc.)
+            farming_region: User's farming region (north, south, west, east, central)
+            primary_crops: List of user's main crops
+            farming_style: User's farming style (traditional, modern, organic, commercial, mixed)
+        """
+        
+        valid_personas = ["auto", "experienced_traditional", "tech_savvy_modern", 
+                         "small_scale_organic", "young_entrepreneur", "southern_progressive"]
+        
+        if persona_type not in valid_personas:
+            print(f"{Fore.RED}Invalid persona type. Valid options: {', '.join(valid_personas)}{Style.RESET_ALL}")
+            return False
+        
+        self.user_preferences["farmer_persona"] = persona_type
+        
+        if farming_region:
+            self.user_preferences["farming_region"] = farming_region
+        if primary_crops:
+            self.user_preferences["primary_crops"] = primary_crops
+        if farming_style:
+            self.user_preferences["farming_style"] = farming_style
+        
+        self._save_user_preferences()
+        
+        persona_info = self.farmer_personas.personas.get(persona_type, {})
+        persona_name = persona_info.get("name", "Auto-selected")
+        
+        print(f"{Fore.GREEN}✓ Farmer persona set to: {persona_name} ({persona_type}){Style.RESET_ALL}")
+        
+        if farming_region:
+            print(f"{Fore.CYAN}Region: {farming_region}{Style.RESET_ALL}")
+        if primary_crops:
+            print(f"{Fore.CYAN}Primary crops: {', '.join(primary_crops)}{Style.RESET_ALL}")
+        if farming_style:
+            print(f"{Fore.CYAN}Farming style: {farming_style}{Style.RESET_ALL}")
+        
+        return True
+
+    def show_available_personas(self):
+        """Display available farmer personas with their characteristics."""
+        
+        print(f"\n{Fore.CYAN}🧑‍🌾 Available Indian Farmer Personas:{Style.RESET_ALL}")
+        print("=" * 60)
+        
+        for persona_key, persona_data in self.farmer_personas.personas.items():
+            print(f"\n{Fore.YELLOW}Persona: {persona_key}{Style.RESET_ALL}")
+            print(f"Name: {persona_data['name']}")
+            print(f"Age: {persona_data['age']} | Experience: {persona_data['experience']}")
+            print(f"Region: {persona_data['region']}")
+            print(f"Specialization: {', '.join(persona_data['primary_crops'][:3])}")
+            print(f"Style: {persona_data['farming_style']}")
+            print(f"Tech Adoption: {persona_data['personality']['technology_adoption']}")
+            print(f"Languages: {', '.join(persona_data['languages'])}")
+            print("-" * 40)
+        
+        print(f"\n{Fore.GREEN}Current persona: {self.user_preferences.get('farmer_persona', 'auto')}{Style.RESET_ALL}")
+        print(f"{Fore.CYAN}To change persona, use: set_farmer_persona('persona_name'){Style.RESET_ALL}")
+
+    def get_government_schemes_info(self, scheme_name: str = None):
+        """Get information about Indian government schemes for farmers."""
+        
+        scheme_info = self.farmer_personas.get_government_scheme_info(scheme_name)
+        
+        if scheme_name:
+            print(f"\n{Fore.CYAN}📋 Government Scheme Information:{Style.RESET_ALL}")
+            print(f"Scheme: {scheme_info['scheme']}")
+            print(f"Description: {scheme_info['description']}")
+            print(f"Advice: {scheme_info['advice']}")
+        else:
+            print(f"\n{Fore.CYAN}📋 Available Government Schemes for Farmers:{Style.RESET_ALL}")
+            print("=" * 50)
+            
+            for scheme, description in scheme_info['all_schemes'].items():
+                print(f"{Fore.YELLOW}{scheme}:{Style.RESET_ALL} {description}")
+            
+            print(f"\n{Fore.GREEN}{scheme_info['advice']}{Style.RESET_ALL}")
+
+    def get_seasonal_farming_advice(self):
+        """Get current seasonal farming advice based on Indian crop calendar."""
+        
+        crop_advice = self.farmer_personas.get_crop_calendar_advice(
+            region=self.user_preferences.get("farming_region"),
+            crop=self.user_preferences.get("primary_crops", [None])[0] if self.user_preferences.get("primary_crops") else None
+        )
+        
+        print(f"\n{Fore.CYAN}🌾 Current Seasonal Farming Advice:{Style.RESET_ALL}")
+        print("=" * 45)
+        
+        print(f"Current Season: {Fore.YELLOW}{crop_advice['current_season'].title()}{Style.RESET_ALL}")
+        print(f"Duration: {crop_advice['season_details']['season']}")
+        print(f"\nRecommended Crops: {', '.join(crop_advice['recommended_crops'])}")
+        print(f"Current Activities: {', '.join(crop_advice['current_activities'])}")
+        print(f"\n{Fore.GREEN}Timing Advice: {crop_advice['timing_advice']}{Style.RESET_ALL}")
+
+    def show_persona_status(self):
+        """Show current persona configuration and preferences."""
+        
+        print(f"\n{Fore.CYAN}🧑‍🌾 Current Farmer Profile:{Style.RESET_ALL}")
+        print("=" * 35)
+        
+        persona_type = self.user_preferences.get("farmer_persona", "auto")
+        farming_region = self.user_preferences.get("farming_region", "general")
+        primary_crops = self.user_preferences.get("primary_crops", [])
+        farming_style = self.user_preferences.get("farming_style", "mixed")
+        
+        if persona_type != "auto" and persona_type in self.farmer_personas.personas:
+            persona_data = self.farmer_personas.personas[persona_type]
+            print(f"Active Persona: {Fore.YELLOW}{persona_data['name']}{Style.RESET_ALL}")
+            print(f"Experience: {persona_data['experience']}")
+            print(f"Region: {persona_data['region']}")
+        else:
+            print(f"Active Persona: {Fore.YELLOW}Auto-selected based on query{Style.RESET_ALL}")
+        
+        print(f"Your Region: {farming_region}")
+        print(f"Primary Crops: {', '.join(primary_crops) if primary_crops else 'Not specified'}")
+        print(f"Farming Style: {farming_style}")
+        print(f"Language: {self.user_preferences.get('language', 'en')}")
 
 
 def display_welcome_message() -> None:

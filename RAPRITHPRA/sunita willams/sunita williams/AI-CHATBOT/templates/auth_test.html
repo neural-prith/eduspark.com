@@ -1,0 +1,102 @@
+{% extends "api_base.html" %}
+
+{% block title %}Authentication Test - EDU SPARK{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 60px 20px;">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3><i class="fas fa-check-circle"></i> Enhanced Authentication Integration Test</h3>
+                </div>
+                <div class="card-body">
+                    <h4>✅ Updated Navigation Links</h4>
+                    <ul class="list-group mb-4">
+                        <li class="list-group-item">
+                            <i class="fas fa-check text-success"></i> Main navbar login button → <code>/api_login_enhanced.html</code>
+                        </li>
+                        <li class="list-group-item">
+                            <i class="fas fa-check text-success"></i> Main navbar signup button → <code>/api_signup_enhanced.html</code>
+                        </li>
+                        <li class="list-group-item">
+                            <i class="fas fa-check text-success"></i> Homepage hero "Get Started" button → <code>/api_signup_enhanced.html</code>
+                        </li>
+                        <li class="list-group-item">
+                            <i class="fas fa-check text-success"></i> Call-to-Action "Create Free Account" → <code>/api_signup_enhanced.html</code>
+                        </li>
+                        <li class="list-group-item">
+                            <i class="fas fa-check text-success"></i> Hindi homepage signup button → <code>/api_signup_enhanced.html</code>
+                        </li>
+                        <li class="list-group-item">
+                            <i class="fas fa-check text-success"></i> Plant disease page auth links → Enhanced pages
+                        </li>
+                    </ul>
+                    
+                    <h4>🔗 Quick Links to Test Enhanced Pages</h4>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card bg-light">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title">Enhanced Login</h5>
+                                    <p class="card-text">Modern design with Firebase integration</p>
+                                    <a href="/api_login_enhanced.html" class="btn btn-primary">
+                                        <i class="fas fa-sign-in-alt"></i> Test Login Page
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card bg-light">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title">Enhanced Signup</h5>
+                                    <p class="card-text">Beautiful UI with social authentication</p>
+                                    <a href="/api_signup_enhanced.html" class="btn btn-success">
+                                        <i class="fas fa-user-plus"></i> Test Signup Page
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h4 class="mt-4">🚀 Firebase Features</h4>
+                    <div class="alert alert-info">
+                        <h6><i class="fas fa-info-circle"></i> Features Available:</h6>
+                        <ul class="mb-0">
+                            <li>✨ Email/Password authentication with Firebase</li>
+                            <li>🔑 Google One-Click Sign-In</li>
+                            <li>📘 Facebook Social Login</li>
+                            <li>🔐 Password reset via email</li>
+                            <li>💪 Password strength indicator</li>
+                            <li>📱 Mobile-responsive design</li>
+                            <li>⚡ Loading animations and transitions</li>
+                            <li>🛡️ Secure token handling</li>
+                        </ul>
+                    </div>
+                    
+                    <h4>📋 Next Steps</h4>
+                    <div class="alert alert-warning">
+                        <h6><i class="fas fa-exclamation-triangle"></i> Firebase Configuration Required:</h6>
+                        <ol class="mb-0">
+                            <li>Follow the <code>FIREBASE_SETUP.md</code> guide</li>
+                            <li>Create Firebase project and enable authentication</li>
+                            <li>Update Firebase config in HTML files</li>
+                            <li>Set environment variables for backend</li>
+                            <li>Install Firebase dependencies: <code>pip install -r firebase_requirements.txt</code></li>
+                        </ol>
+                    </div>
+                    
+                    <div class="text-center mt-4">
+                        <a href="/api_index.html" class="btn btn-outline-primary">
+                            <i class="fas fa-home"></i> Back to Homepage
+                        </a>
+                        <a href="/api_dashboard.html" class="btn btn-outline-secondary ml-2">
+                            <i class="fas fa-tachometer-alt"></i> Dashboard
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

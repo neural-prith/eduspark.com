@@ -1,0 +1,790 @@
+{% extends "api_base.html" %}
+
+{% block title %}Analytics Dashboard - EDU SPARK{% endblock %}
+
+{% block extra_css %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+    .analytics-page {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #f1f4f7 0%, #e3eff5 100%);
+        padding: 80px 0 40px;
+    }
+
+    .analytics-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .analytics-header h1 {
+        font-size: 3rem;
+        font-weight: 800;
+        color: var(--primary-dark);
+        margin-bottom: 1rem;
+    }
+
+    .kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 25px;
+        margin-bottom: 40px;
+    }
+
+    .kpi-card {
+        background: white;
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: var(--container-shadow);
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        border-top: 5px solid var(--primary-color);
+        transition: var(--hover-transition);
+    }
+
+    .kpi-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 25px 50px rgba(45, 90, 39, 0.15);
+    }
+
+    .kpi-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, rgba(45, 90, 39, 0.1), transparent);
+        border-radius: 0 0 0 80px;
+    }
+
+    .kpi-icon {
+        width: 70px;
+        height: 70px;
+        background: var(--gradient-primary);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 2rem;
+        margin: 0 auto 20px;
+        position: relative;
+        z-index: 2;
+    }
+
+    .kpi-value {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--primary-color);
+        margin-bottom: 8px;
+        position: relative;
+        z-index: 2;
+    }
+
+    .kpi-label {
+        color: var(--text-light);
+        font-weight: 600;
+        margin-bottom: 12px;
+        position: relative;
+        z-index: 2;
+    }
+
+    .kpi-change {
+        font-size: 0.9rem;
+        font-weight: 600;
+        padding: 4px 12px;
+        border-radius: 20px;
+        position: relative;
+        z-index: 2;
+    }
+
+    .kpi-change.positive {
+        background: rgba(46, 204, 113, 0.1);
+        color: var(--success-color);
+    }
+
+    .kpi-change.negative {
+        background: rgba(231, 76, 60, 0.1);
+        color: var(--danger-color);
+    }
+
+    .charts-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 30px;
+        margin-bottom: 40px;
+    }
+
+    .chart-card {
+        background: white;
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: var(--container-shadow);
+        position: relative;
+    }
+
+    .chart-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .chart-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: var(--dark-color);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .chart-controls {
+        display: flex;
+        gap: 10px;
+    }
+
+    .chart-btn {
+        padding: 6px 12px;
+        border: 1px solid var(--border-color);
+        background: white;
+        border-radius: 8px;
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: var(--hover-transition);
+        color: var(--text-light);
+    }
+
+    .chart-btn.active {
+        background: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+    }
+
+    .chart-btn:hover {
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+    }
+
+    .analytics-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+        margin-bottom: 40px;
+    }
+
+    .insights-panel {
+        background: white;
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: var(--container-shadow);
+    }
+
+    .insights-header {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 25px;
+    }
+
+    .insights-icon {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, #3498db, #2980b9);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+    }
+
+    .insights-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--dark-color);
+    }
+
+    .insight-item {
+        background: linear-gradient(135deg, #f8f9ff, #f0f4ff);
+        padding: 20px;
+        border-radius: 15px;
+        margin-bottom: 15px;
+        border-left: 5px solid #3498db;
+        transition: var(--hover-transition);
+    }
+
+    .insight-item:hover {
+        transform: translateX(5px);
+        box-shadow: var(--soft-shadow);
+    }
+
+    .insight-title {
+        font-weight: 700;
+        color: var(--dark-color);
+        margin-bottom: 8px;
+    }
+
+    .insight-desc {
+        color: var(--text-light);
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+
+    .market-trends {
+        background: white;
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: var(--container-shadow);
+        margin-bottom: 40px;
+    }
+
+    .trends-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .trends-header h3 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--dark-color);
+        margin-bottom: 10px;
+    }
+
+    .trends-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+    }
+
+    .trend-card {
+        background: linear-gradient(135deg, #fff8e7, #fef4e4);
+        padding: 20px;
+        border-radius: 15px;
+        text-align: center;
+        border: 1px solid rgba(243, 156, 18, 0.2);
+        transition: var(--hover-transition);
+    }
+
+    .trend-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--soft-shadow);
+    }
+
+    .trend-commodity {
+        font-weight: 700;
+        color: var(--dark-color);
+        margin-bottom: 10px;
+    }
+
+    .trend-price {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: var(--primary-color);
+        margin-bottom: 8px;
+    }
+
+    .trend-change {
+        font-size: 0.9rem;
+        font-weight: 600;
+        padding: 4px 12px;
+        border-radius: 20px;
+    }
+
+    .trend-change.up {
+        background: rgba(46, 204, 113, 0.1);
+        color: var(--success-color);
+    }
+
+    .trend-change.down {
+        background: rgba(231, 76, 60, 0.1);
+        color: var(--danger-color);
+    }
+
+    .alerts-panel {
+        background: white;
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: var(--container-shadow);
+    }
+
+    .alert-item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 15px;
+        border-radius: 12px;
+        margin-bottom: 15px;
+        border-left: 4px solid;
+        transition: var(--hover-transition);
+    }
+
+    .alert-item:hover {
+        transform: translateX(5px);
+    }
+
+    .alert-item.warning {
+        background: rgba(243, 156, 18, 0.1);
+        border-color: var(--warning-color);
+    }
+
+    .alert-item.success {
+        background: rgba(46, 204, 113, 0.1);
+        border-color: var(--success-color);
+    }
+
+    .alert-item.info {
+        background: rgba(52, 152, 219, 0.1);
+        border-color: var(--info-color);
+    }
+
+    .alert-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1rem;
+    }
+
+    .alert-icon.warning {
+        background: var(--warning-color);
+    }
+
+    .alert-icon.success {
+        background: var(--success-color);
+    }
+
+    .alert-icon.info {
+        background: var(--info-color);
+    }
+
+    .alert-content h6 {
+        margin: 0 0 5px;
+        font-weight: 700;
+        color: var(--dark-color);
+    }
+
+    .alert-content p {
+        margin: 0;
+        font-size: 0.9rem;
+        color: var(--text-light);
+    }
+
+    @media (max-width: 768px) {
+        .kpi-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+        
+        .charts-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .analytics-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .trends-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .kpi-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .trends-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="analytics-page">
+    <div class="container">
+        <div class="analytics-header animate__animated animate__fadeInDown">
+            <h1><i class="fas fa-chart-line"></i> Agricultural Analytics Dashboard</h1>
+            <p>Monitor your farm performance, market trends, and get AI-powered insights for better decision making</p>
+        </div>
+
+        <!-- KPI Cards -->
+        <div class="kpi-grid animate__animated animate__fadeInUp">
+            <div class="kpi-card">
+                <div class="kpi-icon">
+                    <i class="fas fa-seedling"></i>
+                </div>
+                <div class="kpi-value" data-target="8547">0</div>
+                <div class="kpi-label">Active Farms Monitored</div>
+                <div class="kpi-change positive">
+                    <i class="fas fa-arrow-up"></i> +12.5% this month
+                </div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-icon">
+                    <i class="fas fa-chart-bar"></i>
+                </div>
+                <div class="kpi-value">₹<span data-target="2847">0</span>Cr</div>
+                <div class="kpi-label">Total Crop Value</div>
+                <div class="kpi-change positive">
+                    <i class="fas fa-arrow-up"></i> +8.3% this quarter
+                </div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-icon">
+                    <i class="fas fa-thermometer-half"></i>
+                </div>
+                <div class="kpi-value"><span data-target="85">0</span>%</div>
+                <div class="kpi-label">Average Crop Health</div>
+                <div class="kpi-change positive">
+                    <i class="fas fa-arrow-up"></i> +3.2% this week
+                </div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div class="kpi-value"><span data-target="23">0</span></div>
+                <div class="kpi-label">Active Alerts</div>
+                <div class="kpi-change negative">
+                    <i class="fas fa-arrow-down"></i> -15% from last week
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="charts-grid animate__animated animate__fadeInUp animate__delay-1s">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">
+                        <i class="fas fa-chart-area"></i> Crop Production Trends
+                    </h3>
+                    <div class="chart-controls">
+                        <button class="chart-btn active" data-period="7days">7 Days</button>
+                        <button class="chart-btn" data-period="1month">1 Month</button>
+                        <button class="chart-btn" data-period="3months">3 Months</button>
+                        <button class="chart-btn" data-period="1year">1 Year</button>
+                    </div>
+                </div>
+                <div style="height: 300px;">
+                    <canvas id="productionChart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">
+                        <i class="fas fa-chart-pie"></i> Crop Distribution
+                    </h3>
+                </div>
+                <div style="height: 300px;">
+                    <canvas id="distributionChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics Grid -->
+        <div class="analytics-grid animate__animated animate__fadeInUp animate__delay-2s">
+            <div class="insights-panel">
+                <div class="insights-header">
+                    <div class="insights-icon">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <h3 class="insights-title">AI Insights</h3>
+                </div>
+                
+                <div class="insight-item">
+                    <div class="insight-title">Optimal Harvest Time</div>
+                    <div class="insight-desc">Based on satellite data, your tomatoes in Field A will reach optimal harvest conditions in 5-7 days. Weather conditions are favorable.</div>
+                </div>
+                
+                <div class="insight-item">
+                    <div class="insight-title">Irrigation Optimization</div>
+                    <div class="insight-desc">Reduce irrigation in Field B by 15% this week. Soil moisture levels are adequate, and rain is expected on Thursday.</div>
+                </div>
+                
+                <div class="insight-item">
+                    <div class="insight-title">Disease Risk Alert</div>
+                    <div class="insight-desc">Increased humidity levels indicate 25% higher risk of fungal infections. Consider preventive treatment for vulnerable crops.</div>
+                </div>
+                
+                <div class="insight-item">
+                    <div class="insight-title">Market Opportunity</div>
+                    <div class="insight-desc">Onion prices are expected to increase by 18% next week. Consider accelerating harvest for better margins.</div>
+                </div>
+            </div>
+
+            <div class="alerts-panel">
+                <div class="insights-header">
+                    <div class="insights-icon" style="background: linear-gradient(135deg, #e74c3c, #c0392b);">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <h3 class="insights-title">Active Alerts</h3>
+                </div>
+                
+                <div class="alert-item warning">
+                    <div class="alert-icon warning">
+                        <i class="fas fa-cloud-rain"></i>
+                    </div>
+                    <div class="alert-content">
+                        <h6>Heavy Rainfall Warning</h6>
+                        <p>75mm rainfall expected in next 48 hours. Secure harvest and equipment.</p>
+                    </div>
+                </div>
+                
+                <div class="alert-item success">
+                    <div class="alert-icon success">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="alert-content">
+                        <h6>Price Surge Detected</h6>
+                        <p>Wheat prices increased by 12% today. Good time for selling stored grain.</p>
+                    </div>
+                </div>
+                
+                <div class="alert-item info">
+                    <div class="alert-icon info">
+                        <i class="fas fa-satellite"></i>
+                    </div>
+                    <div class="alert-content">
+                        <h6>Satellite Update</h6>
+                        <p>New high-resolution imagery available for your farm. NDVI analysis updated.</p>
+                    </div>
+                </div>
+                
+                <div class="alert-item warning">
+                    <div class="alert-icon warning">
+                        <i class="fas fa-bug"></i>
+                    </div>
+                    <div class="alert-content">
+                        <h6>Pest Activity Detected</h6>
+                        <p>Increased pest activity reported in nearby farms. Monitor crops closely.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Market Trends -->
+        <div class="market-trends animate__animated animate__fadeInUp animate__delay-3s">
+            <div class="trends-header">
+                <h3><i class="fas fa-chart-line"></i> Live Market Trends</h3>
+                <p>Real-time commodity prices and market movements</p>
+            </div>
+            <div class="trends-grid">
+                <div class="trend-card">
+                    <div class="trend-commodity">Rice</div>
+                    <div class="trend-price">₹2,450/quintal</div>
+                    <div class="trend-change up">
+                        <i class="fas fa-arrow-up"></i> +5.2%
+                    </div>
+                </div>
+                
+                <div class="trend-card">
+                    <div class="trend-commodity">Wheat</div>
+                    <div class="trend-price">₹2,180/quintal</div>
+                    <div class="trend-change up">
+                        <i class="fas fa-arrow-up"></i> +3.8%
+                    </div>
+                </div>
+                
+                <div class="trend-card">
+                    <div class="trend-commodity">Tomatoes</div>
+                    <div class="trend-price">₹45/kg</div>
+                    <div class="trend-change down">
+                        <i class="fas fa-arrow-down"></i> -2.1%
+                    </div>
+                </div>
+                
+                <div class="trend-card">
+                    <div class="trend-commodity">Onions</div>
+                    <div class="trend-price">₹28/kg</div>
+                    <div class="trend-change up">
+                        <i class="fas fa-arrow-up"></i> +7.4%
+                    </div>
+                </div>
+                
+                <div class="trend-card">
+                    <div class="trend-commodity">Potatoes</div>
+                    <div class="trend-price">₹22/kg</div>
+                    <div class="trend-change up">
+                        <i class="fas fa-arrow-up"></i> +1.9%
+                    </div>
+                </div>
+                
+                <div class="trend-card">
+                    <div class="trend-commodity">Corn</div>
+                    <div class="trend-price">₹1,950/quintal</div>
+                    <div class="trend-change down">
+                        <i class="fas fa-arrow-down"></i> -0.8%
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Animate counters
+    function animateCounters() {
+        const counters = document.querySelectorAll('[data-target]');
+        const speed = 50;
+        
+        counters.forEach(counter => {
+            const target = parseInt(counter.getAttribute('data-target'));
+            const increment = Math.ceil(target / speed);
+            let current = 0;
+            
+            const updateCounter = () => {
+                if (current < target) {
+                    current = Math.min(current + increment, target);
+                    counter.textContent = current.toLocaleString();
+                    setTimeout(updateCounter, 30);
+                } else {
+                    counter.textContent = target.toLocaleString();
+                }
+            };
+            
+            updateCounter();
+        });
+    }
+
+    // Initialize charts
+    function initCharts() {
+        // Production Trends Chart
+        const productionCtx = document.getElementById('productionChart').getContext('2d');
+        const productionChart = new Chart(productionCtx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+                datasets: [{
+                    label: 'Rice Production (tons)',
+                    data: [120, 135, 128, 142, 155, 148, 165],
+                    borderColor: '#2ecc71',
+                    backgroundColor: 'rgba(46, 204, 113, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4
+                }, {
+                    label: 'Wheat Production (tons)',
+                    data: [98, 105, 112, 118, 125, 132, 140],
+                    borderColor: '#f39c12',
+                    backgroundColor: 'rgba(243, 156, 18, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            usePointStyle: true,
+                            padding: 20
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(0,0,0,0.1)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+
+        // Crop Distribution Chart
+        const distributionCtx = document.getElementById('distributionChart').getContext('2d');
+        const distributionChart = new Chart(distributionCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Rice', 'Wheat', 'Corn', 'Vegetables', 'Fruits'],
+                datasets: [{
+                    data: [35, 25, 15, 15, 10],
+                    backgroundColor: [
+                        '#2ecc71',
+                        '#f39c12',
+                        '#3498db',
+                        '#e74c3c',
+                        '#9b59b6'
+                    ],
+                    borderWidth: 0,
+                    hoverBorderWidth: 3,
+                    hoverBorderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            usePointStyle: true,
+                            padding: 20
+                        }
+                    }
+                },
+                cutout: '60%'
+            }
+        });
+    }
+
+    // Chart controls
+    document.querySelectorAll('.chart-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            // Remove active class from siblings
+            this.parentNode.querySelectorAll('.chart-btn').forEach(b => b.classList.remove('active'));
+            // Add active class to clicked button
+            this.classList.add('active');
+            
+            // Update chart data based on period
+            const period = this.getAttribute('data-period');
+            console.log('Updating chart for period:', period);
+            // Here you would typically fetch new data and update the chart
+        });
+    });
+
+    // Initialize everything
+    setTimeout(animateCounters, 500);
+    setTimeout(initCharts, 1000);
+
+    // Auto-refresh market trends every 30 seconds
+    setInterval(function() {
+        // Simulate price updates
+        document.querySelectorAll('.trend-price').forEach(price => {
+            const change = (Math.random() - 0.5) * 10; // Random change between -5 and +5
+            const currentPrice = parseFloat(price.textContent.replace(/[₹,]/g, ''));
+            const newPrice = Math.max(currentPrice + change, 1);
+            
+            if (price.textContent.includes('/kg')) {
+                price.textContent = `₹${Math.round(newPrice)}/kg`;
+            } else {
+                price.textContent = `₹${Math.round(newPrice).toLocaleString()}/quintal`;
+            }
+        });
+    }, 30000);
+});
+</script>
+{% endblock %}

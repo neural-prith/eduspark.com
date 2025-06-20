@@ -3,7 +3,7 @@
   "volume": 0.9,
   "rate": 150,
   "voice_id": "default",
-  "language": "bn",
+  "language": "ta",
   "auto_detect_language": true,
   "wake_word": "iti",
   "continuous_listening": false

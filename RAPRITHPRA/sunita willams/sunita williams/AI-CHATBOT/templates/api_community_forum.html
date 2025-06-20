@@ -1,0 +1,483 @@
+{% extends "api_base.html" %}
+
+{% block title %}Community Forum - EDU SPARK{% endblock %}
+
+{% block extra_css %}
+<style>
+    .community-page {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #f5f9fa 0%, #e8f4f8 100%);
+        padding: 80px 0 40px;
+    }
+
+    .community-header {
+        text-align: center;
+        margin-bottom: 50px;
+    }
+
+    .community-header h1 {
+        font-size: 3rem;
+        font-weight: 800;
+        color: var(--primary-dark);
+        margin-bottom: 1rem;
+    }
+
+    .forum-tabs {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 40px;
+        background: white;
+        border-radius: 15px;
+        padding: 5px;
+        max-width: 800px;
+        margin: 0 auto 40px;
+        box-shadow: var(--soft-shadow);
+    }
+
+    .tab-btn {
+        flex: 1;
+        padding: 12px 20px;
+        border: none;
+        background: transparent;
+        border-radius: 12px;
+        font-weight: 600;
+        color: var(--text-light);
+        cursor: pointer;
+        transition: var(--hover-transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .tab-btn.active {
+        background: var(--gradient-primary);
+        color: white;
+        box-shadow: var(--soft-shadow);
+    }
+
+    .discussion-grid {
+        display: grid;
+        gap: 25px;
+        margin-bottom: 40px;
+    }
+
+    .discussion-card {
+        background: white;
+        border-radius: 20px;
+        padding: 25px;
+        box-shadow: var(--container-shadow);
+        transition: var(--hover-transition);
+        border-left: 5px solid var(--primary-color);
+    }
+
+    .discussion-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(45, 90, 39, 0.1);
+    }
+
+    .discussion-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 15px;
+    }
+
+    .discussion-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: var(--dark-color);
+        margin-bottom: 10px;
+        cursor: pointer;
+    }
+
+    .discussion-title:hover {
+        color: var(--primary-color);
+    }
+
+    .discussion-meta {
+        display: flex;
+        gap: 20px;
+        color: var(--text-light);
+        font-size: 0.9rem;
+        margin-bottom: 15px;
+    }
+
+    .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .discussion-content {
+        color: var(--text-light);
+        line-height: 1.6;
+        margin-bottom: 20px;
+    }
+
+    .discussion-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 15px;
+    }
+
+    .discussion-tag {
+        background: var(--light-color);
+        color: var(--primary-color);
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        border: 1px solid rgba(45, 90, 39, 0.2);
+    }
+
+    .discussion-stats {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .stats-left {
+        display: flex;
+        gap: 20px;
+    }
+
+    .stat-item {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        color: var(--text-light);
+        font-size: 0.9rem;
+    }
+
+    .expert-badge {
+        background: linear-gradient(135deg, #f39c12, #e67e22);
+        color: white;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    .ask-question-btn {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        width: 60px;
+        height: 60px;
+        background: var(--gradient-primary);
+        border: none;
+        border-radius: 50%;
+        color: white;
+        font-size: 1.5rem;
+        cursor: pointer;
+        box-shadow: 0 10px 30px rgba(45, 90, 39, 0.3);
+        transition: var(--hover-transition);
+        z-index: 100;
+    }
+
+    .ask-question-btn:hover {
+        transform: scale(1.1);
+    }
+
+    .expert-section {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        margin-bottom: 30px;
+        box-shadow: var(--container-shadow);
+    }
+
+    .experts-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 25px;
+    }
+
+    .expert-card {
+        background: linear-gradient(135deg, #fff8e7, #fef4e4);
+        padding: 25px;
+        border-radius: 15px;
+        text-align: center;
+        border: 1px solid rgba(243, 156, 18, 0.2);
+        transition: var(--hover-transition);
+    }
+
+    .expert-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--soft-shadow);
+    }
+
+    .expert-avatar {
+        width: 80px;
+        height: 80px;
+        background: var(--gradient-primary);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 2rem;
+        font-weight: 700;
+        margin: 0 auto 15px;
+    }
+
+    .expert-name {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--dark-color);
+        margin-bottom: 5px;
+    }
+
+    .expert-title {
+        color: var(--text-light);
+        margin-bottom: 15px;
+    }
+
+    .expert-specialties {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px;
+        margin-bottom: 20px;
+    }
+
+    .specialty-tag {
+        background: rgba(45, 90, 39, 0.1);
+        color: var(--primary-color);
+        padding: 4px 10px;
+        border-radius: 15px;
+        font-size: 0.8rem;
+    }
+
+    .consult-btn {
+        background: var(--gradient-primary);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--hover-transition);
+        width: 100%;
+    }
+
+    .consult-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--soft-shadow);
+    }
+
+    @media (max-width: 768px) {
+        .forum-tabs {
+            flex-direction: column;
+        }
+        
+        .discussion-header {
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .discussion-meta {
+            flex-wrap: wrap;
+        }
+        
+        .experts-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="community-page">
+    <div class="container">
+        <div class="community-header animate__animated animate__fadeInDown">
+            <h1><i class="fas fa-users"></i> Community Forum</h1>
+            <p>Connect with fellow farmers, share knowledge, get expert advice, and grow together</p>
+        </div>
+
+        <div class="forum-tabs animate__animated animate__fadeInUp">
+            <button class="tab-btn active" data-tab="discussions">
+                <i class="fas fa-comments"></i> Discussions
+            </button>
+            <button class="tab-btn" data-tab="experts">
+                <i class="fas fa-user-graduate"></i> Expert Consultation
+            </button>
+            <button class="tab-btn" data-tab="success">
+                <i class="fas fa-trophy"></i> Success Stories
+            </button>
+        </div>
+
+        <div id="discussions" class="tab-content active">
+            <div class="discussion-grid">
+                <div class="discussion-card">
+                    <div class="discussion-header">
+                        <div>
+                            <h3 class="discussion-title">Best organic fertilizers for tomato farming?</h3>
+                            <div class="discussion-meta">
+                                <div class="meta-item">
+                                    <i class="fas fa-user"></i> Rajesh Kumar
+                                </div>
+                                <div class="meta-item">
+                                    <i class="fas fa-clock"></i> 2 hours ago
+                                </div>
+                                <div class="meta-item">
+                                    <i class="fas fa-map-marker-alt"></i> Nashik, Maharashtra
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="discussion-content">
+                        I'm planning to grow organic tomatoes this season. What are the best organic fertilizers you've used? Looking for something that gives good yield and maintains soil health...
+                    </div>
+                    <div class="discussion-tags">
+                        <span class="discussion-tag">Organic Farming</span>
+                        <span class="discussion-tag">Tomatoes</span>
+                        <span class="discussion-tag">Fertilizers</span>
+                    </div>
+                    <div class="discussion-stats">
+                        <div class="stats-left">
+                            <div class="stat-item">
+                                <i class="fas fa-thumbs-up"></i> 24 likes
+                            </div>
+                            <div class="stat-item">
+                                <i class="fas fa-reply"></i> 12 replies
+                            </div>
+                        </div>
+                        <button class="consult-btn" style="width: auto; padding: 8px 16px;">Join Discussion</button>
+                    </div>
+                </div>
+
+                <div class="discussion-card">
+                    <div class="discussion-header">
+                        <div>
+                            <h3 class="discussion-title">Drip irrigation system installation guide</h3>
+                            <div class="discussion-meta">
+                                <div class="meta-item">
+                                    <i class="fas fa-user"></i> Dr. Priya Sharma
+                                    <span class="expert-badge">Expert</span>
+                                </div>
+                                <div class="meta-item">
+                                    <i class="fas fa-clock"></i> 1 day ago
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="discussion-content">
+                        Complete step-by-step guide for installing drip irrigation system in your farm. Covers planning, materials needed, installation process, and maintenance tips...
+                    </div>
+                    <div class="discussion-tags">
+                        <span class="discussion-tag">Irrigation</span>
+                        <span class="discussion-tag">Water Management</span>
+                        <span class="discussion-tag">Tutorial</span>
+                    </div>
+                    <div class="discussion-stats">
+                        <div class="stats-left">
+                            <div class="stat-item">
+                                <i class="fas fa-thumbs-up"></i> 68 likes
+                            </div>
+                            <div class="stat-item">
+                                <i class="fas fa-reply"></i> 23 replies
+                            </div>
+                        </div>
+                        <button class="consult-btn" style="width: auto; padding: 8px 16px;">Read More</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="experts" class="tab-content" style="display: none;">
+            <div class="expert-section">
+                <h3 style="text-align: center; margin-bottom: 30px; color: var(--primary-dark);">
+                    <i class="fas fa-user-graduate"></i> Agricultural Experts
+                </h3>
+                <div class="experts-grid">
+                    <div class="expert-card">
+                        <div class="expert-avatar">PS</div>
+                        <div class="expert-name">Dr. Priya Sharma</div>
+                        <div class="expert-title">Soil Science Expert</div>
+                        <div class="expert-specialties">
+                            <span class="specialty-tag">Soil Health</span>
+                            <span class="specialty-tag">Nutrition</span>
+                            <span class="specialty-tag">pH Management</span>
+                        </div>
+                        <button class="consult-btn">
+                            <i class="fas fa-video"></i> Book Consultation
+                        </button>
+                    </div>
+
+                    <div class="expert-card">
+                        <div class="expert-avatar">AK</div>
+                        <div class="expert-name">Arun Kumar</div>
+                        <div class="expert-title">Crop Protection Specialist</div>
+                        <div class="expert-specialties">
+                            <span class="specialty-tag">Pest Control</span>
+                            <span class="specialty-tag">Disease Management</span>
+                            <span class="specialty-tag">IPM</span>
+                        </div>
+                        <button class="consult-btn">
+                            <i class="fas fa-video"></i> Book Consultation
+                        </button>
+                    </div>
+
+                    <div class="expert-card">
+                        <div class="expert-avatar">MS</div>
+                        <div class="expert-name">Dr. Meera Singh</div>
+                        <div class="expert-title">Horticulture Expert</div>
+                        <div class="expert-specialties">
+                            <span class="specialty-tag">Fruit Crops</span>
+                            <span class="specialty-tag">Vegetables</span>
+                            <span class="specialty-tag">Post-harvest</span>
+                        </div>
+                        <button class="consult-btn">
+                            <i class="fas fa-video"></i> Book Consultation
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button class="ask-question-btn" title="Ask Question">
+            <i class="fas fa-plus"></i>
+        </button>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Tab switching
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const targetTab = this.getAttribute('data-tab');
+            
+            tabBtns.forEach(b => b.classList.remove('active'));
+            tabContents.forEach(c => c.style.display = 'none');
+            
+            this.classList.add('active');
+            document.getElementById(targetTab).style.display = 'block';
+        });
+    });
+
+    // Ask question button
+    document.querySelector('.ask-question-btn').addEventListener('click', function() {
+        alert('Ask Question feature will open question posting form');
+    });
+
+    // Consultation booking
+    document.querySelectorAll('.consult-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            if (this.textContent.includes('Book Consultation')) {
+                const expertName = this.closest('.expert-card').querySelector('.expert-name').textContent;
+                alert(`Booking consultation with ${expertName}. Redirecting to booking calendar...`);
+            }
+        });
+    });
+});
+</script>
+{% endblock %} 

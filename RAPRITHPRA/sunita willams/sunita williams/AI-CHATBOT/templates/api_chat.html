@@ -46,19 +46,77 @@
         <div class="chat-header">
             <div class="chat-title">
                 <h2><i class="fas fa-comment-dots"></i> EDU SPARK Assistant</h2>
-                <p>Your agricultural knowledge companion</p>
+                <p>Your agricultural knowledge companion | आपका कृषि ज्ञान साथी</p>
             </div>
             <div class="chat-actions">
+                <!-- Compact Persona Dropdown -->
+                <div class="persona-dropdown">
+                    <button id="personaDropdownBtn" class="action-btn persona-btn" title="Choose Farming Advisor">
+                        <span id="currentPersonaIcon">🧑‍🌾</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="persona-dropdown-content" id="personaDropdownContent">
+                        <div class="persona-option" data-persona="auto">
+                            <span class="persona-emoji">🤖</span>
+                            <div class="persona-info">
+                                <div class="persona-name">Auto-Select</div>
+                                <div class="persona-desc">Based on your query</div>
+                            </div>
+                        </div>
+                        <div class="persona-option" data-persona="experienced_traditional">
+                            <span class="persona-emoji">🧑‍🌾</span>
+                            <div class="persona-info">
+                                <div class="persona-name">राम बाबू (Ram Babu)</div>
+                                <div class="persona-desc">Traditional Expert • Punjab</div>
+                            </div>
+                        </div>
+                        <div class="persona-option" data-persona="tech_savvy_modern">
+                            <span class="persona-emoji">👨‍💻</span>
+                            <div class="persona-info">
+                                <div class="persona-name">अनिल शर्मा (Anil Sharma)</div>
+                                <div class="persona-desc">Tech-Savvy • Maharashtra</div>
+                            </div>
+                        </div>
+                        <div class="persona-option" data-persona="small_scale_organic">
+                            <span class="persona-emoji">👩‍🌾</span>
+                            <div class="persona-info">
+                                <div class="persona-name">सुमित्रा देवी (Sumitra Devi)</div>
+                                <div class="persona-desc">Organic Expert • UP/Bihar</div>
+                            </div>
+                        </div>
+                        <div class="persona-option" data-persona="young_entrepreneur">
+                            <span class="persona-emoji">🚀</span>
+                            <div class="persona-info">
+                                <div class="persona-name">विकास पटेल (Vikas Patel)</div>
+                                <div class="persona-desc">Entrepreneur • Gujarat</div>
+                            </div>
+                        </div>
+                        <div class="persona-option" data-persona="southern_progressive">
+                            <span class="persona-emoji">🔬</span>
+                            <div class="persona-info">
+                                <div class="persona-name">रमेश गौड़ा (Ramesh Gowda)</div>
+                                <div class="persona-desc">Research Expert • Karnataka</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
                 <button id="voiceToggle" class="action-btn" title="Toggle voice mode">
                     <i class="fas fa-microphone"></i>
                 </button>
                 <button id="clearChat" class="action-btn" title="Clear conversation">
                     <i class="fas fa-broom"></i>
                 </button>
+                <button id="govtSchemesBtn" class="action-btn" title="Government Schemes">
+                    <i class="fas fa-landmark"></i>
+                </button>
+                <button id="seasonalAdviceBtn" class="action-btn" title="Seasonal Advice">
+                    <i class="fas fa-calendar-alt"></i>
+                </button>
             </div>
             <div class="language-indicator">
                 <i class="fas fa-language"></i>
-                <span id="languageIndicator">English</span>
+                <span id="languageIndicator">हिंदी-English</span>
             </div>
         </div>
         
@@ -164,32 +222,589 @@
         <img src="" alt="Full size image" class="modal-image" id="modalImage">
     </div>
 </div>
+
+<!-- Persona Selection Modal -->
+<div class="persona-modal" id="personaModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3><i class="fas fa-users"></i> भारतीय किसान सलाहकार चुनें (Choose Your Indian Farmer Advisor)</h3>
+            <button type="button" class="close-btn" id="closePersonaModal">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="persona-grid">
+                <div class="persona-card traditional" data-persona="experienced_traditional">
+                    <div class="persona-avatar traditional">🧑‍🌾</div>
+                    <div class="persona-info">
+                        <h3>Traditional Expert</h3>
+                        <div class="hindi-name">राम बाबू (Ram Babu)</div>
+                        <div class="persona-details">
+                            <span class="persona-tag">35 years experience</span>
+                            <span class="persona-tag">Punjab/Haryana</span>
+                        </div>
+                        <div class="persona-specialization">
+                            <h4>Specialization:</h4>
+                            <ul>
+                                <li>Wheat & Rice farming</li>
+                                <li>Traditional methods</li>
+                                <li>Water management</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <button class="persona-select-btn" data-persona="experienced_traditional">
+                        Select राम बाबू
+                    </button>
+                </div>
+
+                <div class="persona-card modern" data-persona="tech_savvy_modern">
+                    <div class="persona-avatar modern">👨‍💻</div>
+                    <div class="persona-info">
+                        <h3>Tech-Savvy Modern</h3>
+                        <div class="hindi-name">अनिल शर्मा (Anil Sharma)</div>
+                        <div class="persona-details">
+                            <span class="persona-tag">12 years experience</span>
+                            <span class="persona-tag">Maharashtra/Karnataka</span>
+                        </div>
+                        <div class="persona-specialization">
+                            <h4>Specialization:</h4>
+                            <ul>
+                                <li>Precision agriculture</li>
+                                <li>Drip irrigation</li>
+                                <li>Digital farming</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <button class="persona-select-btn" data-persona="tech_savvy_modern">
+                        Select अनिल शर्मा
+                    </button>
+                </div>
+
+                <div class="persona-card organic" data-persona="small_scale_organic">
+                    <div class="persona-avatar organic">👩‍🌾</div>
+                    <div class="persona-info">
+                        <h3>Organic Expert</h3>
+                        <div class="hindi-name">सुमित्रा देवी (Sumitra Devi)</div>
+                        <div class="persona-details">
+                            <span class="persona-tag">20 years experience</span>
+                            <span class="persona-tag">UP/Bihar</span>
+                        </div>
+                        <div class="persona-specialization">
+                            <h4>Specialization:</h4>
+                            <ul>
+                                <li>Organic farming</li>
+                                <li>Natural pesticides</li>
+                                <li>Kitchen gardening</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <button class="persona-select-btn" data-persona="small_scale_organic">
+                        Select सुमित्रा देवी
+                    </button>
+                </div>
+
+                <div class="persona-card entrepreneur" data-persona="young_entrepreneur">
+                    <div class="persona-avatar entrepreneur">🚀</div>
+                    <div class="persona-info">
+                        <h3>Young Entrepreneur</h3>
+                        <div class="hindi-name">विकास पटेल (Vikas Patel)</div>
+                        <div class="persona-details">
+                            <span class="persona-tag">8 years experience</span>
+                            <span class="persona-tag">Gujarat/Rajasthan</span>
+                        </div>
+                        <div class="persona-specialization">
+                            <h4>Specialization:</h4>
+                            <ul>
+                                <li>Commercial farming</li>
+                                <li>Export markets</li>
+                                <li>Agri-business</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <button class="persona-select-btn" data-persona="young_entrepreneur">
+                        Select विकास पटेल
+                    </button>
+                </div>
+
+                <div class="persona-card progressive" data-persona="southern_progressive">
+                    <div class="persona-avatar progressive">🔬</div>
+                    <div class="persona-info">
+                        <h3>Research-Focused</h3>
+                        <div class="hindi-name">रमेश गौड़ा (Ramesh Gowda)</div>
+                        <div class="persona-details">
+                            <span class="persona-tag">18 years experience</span>
+                            <span class="persona-tag">Karnataka/Tamil Nadu</span>
+                        </div>
+                        <div class="persona-specialization">
+                            <h4>Specialization:</h4>
+                            <ul>
+                                <li>Scientific farming</li>
+                                <li>Climate adaptation</li>
+                                <li>Research methods</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <button class="persona-select-btn" data-persona="southern_progressive">
+                        Select रमेश गौड़ा
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Government Schemes Modal -->
+<div class="govt-schemes-modal" id="govtSchemesModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3><i class="fas fa-landmark"></i> सरकारी योजनाएं (Government Schemes for Farmers)</h3>
+            <button type="button" class="close-btn" id="closeGovtSchemesModal">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="schemes-grid">
+                <div class="scheme-card">
+                    <h4>PM-KISAN</h4>
+                    <p>₹6000 annual income support | वार्षिक आय सहायता</p>
+                    <button class="scheme-apply-btn">Apply / आवेदन करें</button>
+                </div>
+                <div class="scheme-card">
+                    <h4>Fasal Bima</h4>
+                    <p>Crop insurance scheme | फसल बीमा योजना</p>
+                    <button class="scheme-apply-btn">Apply / आवेदन करें</button>
+                </div>
+                <div class="scheme-card">
+                    <h4>Soil Health Card</h4>
+                    <p>Free soil testing | मुफ्त मिट्टी जांच</p>
+                    <button class="scheme-apply-btn">Apply / आवेदन करें</button>
+                </div>
+                <div class="scheme-card">
+                    <h4>KCC</h4>
+                    <p>Kisan Credit Card | किसान क्रेडिट कार्ड</p>
+                    <button class="scheme-apply-btn">Apply / आवेदन करें</button>
+                </div>
+                <div class="scheme-card">
+                    <h4>e-NAM</h4>
+                    <p>Online agricultural market | ऑनलाइन कृषि बाजार</p>
+                    <button class="scheme-apply-btn">Register / रजिस्टर करें</button>
+                </div>
+                <div class="scheme-card">
+                    <h4>PMFBY</h4>
+                    <p>Pradhan Mantri Fasal Bima Yojana</p>
+                    <button class="scheme-apply-btn">Apply / आवेदन करें</button>
+                </div>
+            </div>
+            <div class="cultural-element">
+                <div class="icon">🏛️</div>
+                <div class="text">Visit your nearest Agriculture Office for assistance | सहायता के लिए अपने नजदीकी कृषि कार्यालय में जाएं</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Seasonal Advice Modal -->
+<div class="seasonal-advice-modal" id="seasonalAdviceModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3><i class="fas fa-calendar-alt"></i> मौसमी सलाह (Seasonal Farming Advice)</h3>
+            <button type="button" class="close-btn" id="closeSeasonalAdviceModal">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="seasonal-indicator">
+                <div class="season-badge" id="currentSeason">Kharif Season</div>
+            </div>
+            <div class="seasonal-crops" id="seasonalCrops">
+                <span class="crop-tag">Rice</span>
+                <span class="crop-tag">Cotton</span>
+                <span class="crop-tag">Sugarcane</span>
+                <span class="crop-tag">Soybean</span>
+                <span class="crop-tag">Groundnut</span>
+            </div>
+            <div class="seasonal-advice">
+                <h4>Current Activities | वर्तमान गतिविधियां</h4>
+                <ul id="currentActivities">
+                    <li>Sowing of Kharif crops | खरीफ फसलों की बुआई</li>
+                    <li>Weed management | खरपतवार प्रबंधन</li>
+                    <li>Pest monitoring | कीट निगरानी</li>
+                    <li>Water management | पानी का प्रबंधन</li>
+                </ul>
+            </div>
+            <div class="cultural-element">
+                <div class="icon">🌾</div>
+                <div class="text">Follow traditional wisdom with modern techniques | पारंपरिक ज्ञान के साथ आधुनिक तकनीकों का पालन करें</div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block extra_css %}
 <style>
-    /* Chat Layout */
+    /* Enhanced Chat Layout */
     .chat-container {
         display: flex;
         max-width: 1280px;
         height: calc(100vh - 180px);
         margin: 0 auto;
-        background-color: white;
-        border-radius: 16px;
+        background: linear-gradient(145deg, #ffffff 0%, #f8fdf9 100%);
+        border-radius: 24px;
         overflow: hidden;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        box-shadow: var(--container-shadow);
         margin-top: 30px;
         margin-bottom: 30px;
+        border: 1px solid rgba(45, 90, 39, 0.1);
+        position: relative;
+    }
+
+    .chat-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--gradient-primary);
+        border-radius: 24px 24px 0 0;
     }
     
-    /* Topics Sidebar */
+    /* Enhanced Topics Sidebar */
     .topics-sidebar {
         width: 280px;
-        background-color: #f8f9fa;
-        border-right: 1px solid #e9ecef;
+        background: linear-gradient(180deg, var(--light-color) 0%, #f0f7f1 100%);
+        border-right: 1px solid rgba(45, 90, 39, 0.1);
         display: flex;
         flex-direction: column;
-        transition: all 0.3s ease;
+        transition: var(--hover-transition);
+        position: relative;
+    }
+
+    /* Compact Persona Dropdown Styling */
+    .persona-dropdown {
+        position: relative;
+        display: inline-block;
+    }
+
+    .persona-btn {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        min-width: 50px;
+        background: linear-gradient(135deg, var(--indian-saffron, #FF9933), var(--cultural-gold, #FFD700));
+        border: 1px solid var(--indian-green, #138808);
+    }
+
+    .persona-btn:hover {
+        background: linear-gradient(135deg, var(--cultural-gold, #FFD700), var(--indian-saffron, #FF9933));
+        transform: translateY(-2px);
+    }
+
+    #currentPersonaIcon {
+        font-size: 1.2rem;
+    }
+
+    .persona-dropdown-content {
+        display: none;
+        position: absolute;
+        top: 100%;
+        right: 0;
+        background: white;
+        min-width: 280px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+        border-radius: 12px;
+        border: 1px solid var(--indian-green, #138808);
+        z-index: 1000;
+        overflow: hidden;
+        margin-top: 5px;
+    }
+
+    .persona-dropdown-content.show {
+        display: block;
+        animation: dropdownFadeIn 0.3s ease;
+    }
+
+    @keyframes dropdownFadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .persona-option {
+        display: flex;
+        align-items: center;
+        padding: 12px 16px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .persona-option:last-child {
+        border-bottom: none;
+    }
+
+    .persona-option:hover {
+        background: linear-gradient(135deg, rgba(255,153,51,0.1), rgba(255,215,0,0.05));
+        transform: translateX(3px);
+    }
+
+    .persona-option.selected {
+        background: linear-gradient(135deg, var(--indian-saffron, #FF9933), var(--cultural-gold, #FFD700));
+        color: white;
+    }
+
+    .persona-option.selected .persona-desc {
+        color: rgba(255,255,255,0.9);
+    }
+
+    .persona-emoji {
+        font-size: 1.5rem;
+        margin-right: 12px;
+        min-width: 30px;
+        text-align: center;
+    }
+
+    .persona-info {
+        flex: 1;
+    }
+
+    .persona-name {
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: var(--text-color);
+        margin-bottom: 2px;
+    }
+
+    .persona-desc {
+        font-size: 0.75rem;
+        color: var(--text-light, #666);
+        opacity: 0.8;
+    }
+
+    /* Fix chat layout to prevent overlaps */
+    .chat-main {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        min-height: 0;
+    }
+
+    .chat-header {
+        flex-shrink: 0;
+        padding: 15px 20px;
+        background: linear-gradient(135deg, #fff 0%, #f8fdf9 100%);
+        border-bottom: 2px solid rgba(45, 90, 39, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: relative;
+    }
+
+    .messages-container {
+        flex: 1;
+        overflow-y: auto;
+        padding: 20px 25px;
+        background: linear-gradient(180deg, #f8fdf9 0%, #ffffff 100%);
+    }
+
+    .chat-input-container {
+        flex-shrink: 0;
+        padding: 15px 20px;
+        background: white;
+        border-top: 1px solid rgba(45, 90, 39, 0.1);
+    }
+
+    /* Compact Persona Dropdown Styling */
+    .persona-dropdown {
+        position: relative;
+        display: inline-block;
+    }
+
+    .persona-btn {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        min-width: 50px;
+        background: linear-gradient(135deg, var(--indian-saffron, #FF9933), var(--cultural-gold, #FFD700));
+        border: 1px solid var(--indian-green, #138808);
+    }
+
+    .persona-btn:hover {
+        background: linear-gradient(135deg, var(--cultural-gold, #FFD700), var(--indian-saffron, #FF9933));
+        transform: translateY(-2px);
+    }
+
+    #currentPersonaIcon {
+        font-size: 1.2rem;
+    }
+
+    .persona-dropdown-content {
+        display: none;
+        position: absolute;
+        top: 100%;
+        right: 0;
+        background: white;
+        min-width: 280px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+        border-radius: 12px;
+        border: 1px solid var(--indian-green, #138808);
+        z-index: 1000;
+        overflow: hidden;
+        margin-top: 5px;
+    }
+
+    .persona-dropdown-content.show {
+        display: block;
+        animation: dropdownFadeIn 0.3s ease;
+    }
+
+    @keyframes dropdownFadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .persona-option {
+        display: flex;
+        align-items: center;
+        padding: 12px 16px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .persona-option:last-child {
+        border-bottom: none;
+    }
+
+    .persona-option:hover {
+        background: linear-gradient(135deg, rgba(255,153,51,0.1), rgba(255,215,0,0.05));
+        transform: translateX(3px);
+    }
+
+    .persona-option.selected {
+        background: linear-gradient(135deg, var(--indian-saffron, #FF9933), var(--cultural-gold, #FFD700));
+        color: white;
+    }
+
+    .persona-option.selected .persona-desc {
+        color: rgba(255,255,255,0.9);
+    }
+
+    .persona-emoji {
+        font-size: 1.5rem;
+        margin-right: 12px;
+        min-width: 30px;
+        text-align: center;
+    }
+
+    .persona-info {
+        flex: 1;
+    }
+
+    .persona-name {
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: var(--text-color);
+        margin-bottom: 2px;
+    }
+
+    .persona-desc {
+        font-size: 0.75rem;
+        color: var(--text-light, #666);
+        opacity: 0.8;
+    }
+
+    /* Notification styles */
+    .persona-notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 12px 16px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        z-index: 10000;
+        max-width: 300px;
+        animation: slideInRight 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .persona-notification.success {
+        border-left: 4px solid #2ecc71;
+        background: linear-gradient(135deg, #fff, #f0fff4);
+    }
+
+    .persona-notification.error {
+        border-left: 4px solid #e74c3c;
+        background: linear-gradient(135deg, #fff, #fef5f5);
+    }
+
+    .notification-close {
+        background: none;
+        border: none;
+        font-size: 18px;
+        cursor: pointer;
+        color: #666;
+        margin-left: auto;
+    }
+
+    @keyframes slideInRight {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    /* Fix chat layout to prevent overlaps */
+    .chat-main {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        min-height: 0;
+    }
+
+    .chat-header {
+        flex-shrink: 0;
+        padding: 20px 25px;
+        background: linear-gradient(135deg, #fff 0%, #f8fdf9 100%);
+        border-bottom: 2px solid rgba(45, 90, 39, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: relative;
+    }
+
+    .messages-container {
+        flex: 1;
+        overflow-y: auto;
+        padding: 20px 25px;
+        background: linear-gradient(180deg, #f8fdf9 0%, #ffffff 100%);
+    }
+
+    .chat-input-container {
+        flex-shrink: 0;
+        padding: 20px 25px;
+        background: white;
+        border-top: 1px solid rgba(45, 90, 39, 0.1);
     }
     
     .sidebar-header {
@@ -240,9 +855,15 @@
     }
     
     .topic-btn:hover {
-        background-color: rgba(76, 175, 80, 0.1);
+        background: var(--gradient-tertiary);
         color: var(--primary-color);
-        transform: translateY(-2px);
+        transform: translateY(-2px) scale(1.02);
+        box-shadow: var(--soft-shadow);
+        border-radius: 12px;
+    }
+
+    .topic-btn:active {
+        transform: translateY(0) scale(1);
     }
     
     .quick-links {
@@ -394,8 +1015,21 @@
         flex: 1;
         padding: 20px;
         overflow-y: auto;
-        background-color: #f9fafb;
-        background-image: url('https://www.transparenttextures.com/patterns/cubes.png');
+        background: linear-gradient(180deg, #fafcfb 0%, #f5f9f6 100%);
+        position: relative;
+    }
+
+    .messages-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: 
+            radial-gradient(circle at 20% 20%, rgba(45, 90, 39, 0.02) 0%, transparent 50%),
+            radial-gradient(circle at 80% 80%, rgba(116, 198, 157, 0.03) 0%, transparent 50%);
+        pointer-events: none;
     }
     
     .welcome-message {
@@ -494,18 +1128,44 @@
     }
     
     .assistant .message-content {
-        background-color: white;
-        color: #495057;
-        border-top-left-radius: 0;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        background: linear-gradient(145deg, #ffffff 0%, #f8fdf9 100%);
+        color: var(--text-color);
+        border-top-left-radius: 4px;
+        box-shadow: var(--soft-shadow);
+        border: 1px solid rgba(45, 90, 39, 0.08);
+        position: relative;
+    }
+
+    .assistant .message-content::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 3px;
+        height: 100%;
+        background: var(--gradient-primary);
+        border-radius: 12px 0 0 12px;
     }
     
     .user .message-content {
-        background-color: var(--info-color);
+        background: var(--gradient-primary);
         color: white;
-        border-top-right-radius: 0;
+        border-top-right-radius: 4px;
         text-align: right;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        box-shadow: var(--soft-shadow);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .user .message-content::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 3px;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 0 12px 12px 0;
     }
     
     .chat-input-container {
@@ -561,10 +1221,18 @@
     .chat-input-wrapper {
         display: flex;
         align-items: center;
-        background-color: #f1f3f5;
-        border-radius: 30px;
-        padding: 5px;
-        transition: all 0.3s ease;
+        background: linear-gradient(145deg, #ffffff 0%, #f8fdf9 100%);
+        border-radius: 25px;
+        padding: 8px;
+        transition: var(--hover-transition);
+        border: 2px solid rgba(45, 90, 39, 0.1);
+        box-shadow: var(--soft-shadow);
+    }
+
+    .chat-input-wrapper:focus-within {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(45, 90, 39, 0.1);
+        transform: translateY(-2px);
     }
     
     .chat-input-wrapper:focus-within {
@@ -913,6 +1581,10 @@
 {% endblock %}
 
 {% block extra_js %}
+<!-- Load Persona System Scripts -->
+<script src="/static/js/persona.js"></script>
+<script src="/static/js/chat-persona-integration.js"></script>
+
 <script>
     // IMPORTANT: Single DOMContentLoaded event to prevent nesting issues
     
@@ -935,7 +1607,7 @@
         'ta': { 'chatPage': { 'listening': 'கேட்கிறது...', 'processing': 'உங்கள் பேச்சை செயலாக்குகிறது...' } },
         'te': { 'chatPage': { 'listening': 'వింటున్నాను...', 'processing': 'మీ ప్రసంగాన్ని ప్రాసెస్ చేస్తోంది...' } },
         'mr': { 'chatPage': { 'listening': 'ऐकत आहे...', 'processing': 'तुमचे भाषण प्रक्रिया करत आहे...' } },
-        'kn': { 'chatPage': { 'listening': 'ಆಲಿಸುತ್ತಿದೆ...', 'processing': 'ನಿಮ್ಮ ಮಾತನ್ನು ಸಂಸ್ಕರಿಸಲಾಗುತ್ತಿದೆ...' } }
+        'kn': { 'chatPage': { 'listening': 'ಆಲಿಸುತ್ತಿದೆ...', 'processing': 'ನಿಮ್ಮ ಮಾತನ್ನು ಸಂಸ್ಕರಿಸಲಾಗುತ್ತಿದ್ದೇನೆ...' } }
     };
     
     document.addEventListener('DOMContentLoaded', function() {
@@ -1790,5 +2462,433 @@
             window.currentRecognition.stop();
         }
     }
+
+    // Enhanced UI Animations and Interactions
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add smooth scroll behavior to messages container
+        const messagesContainer = document.getElementById('chatbox');
+        if (messagesContainer) {
+            messagesContainer.style.scrollBehavior = 'smooth';
+        }
+
+        // Add hover effects to topic buttons
+        const topicButtons = document.querySelectorAll('.topic-btn');
+        topicButtons.forEach(btn => {
+            btn.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-2px) scale(1.02)';
+            });
+            
+            btn.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+
+        // Add typing animation to input
+        const chatInput = document.getElementById('userMessage');
+        if (chatInput) {
+            chatInput.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'translateY(-2px)';
+                this.parentElement.style.boxShadow = '0 8px 25px rgba(45, 90, 39, 0.15)';
+            });
+            
+            chatInput.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'translateY(0)';
+                this.parentElement.style.boxShadow = 'var(--soft-shadow)';
+            });
+        }
+
+        // Add pulse animation to send button when input has text
+        if (chatInput) {
+            chatInput.addEventListener('input', function() {
+                const sendBtn = document.getElementById('sendMessage');
+                if (this.value.trim()) {
+                    sendBtn.classList.add('animate-pulse');
+                } else {
+                    sendBtn.classList.remove('animate-pulse');
+                }
+            });
+        }
+
+        // Add smooth entrance animations to messages
+        function animateNewMessage(messageElement) {
+            messageElement.style.opacity = '0';
+            messageElement.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                messageElement.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+                messageElement.style.opacity = '1';
+                messageElement.style.transform = 'translateY(0)';
+            }, 50);
+        }
+
+        // Observe for new messages and animate them
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                mutation.addedNodes.forEach(function(node) {
+                    if (node.nodeType === 1 && node.classList.contains('message')) {
+                        animateNewMessage(node);
+                    }
+                });
+            });
+        });
+
+        if (messagesContainer) {
+            observer.observe(messagesContainer, { childList: true });
+        }
+
+        // Add floating animation to assistant avatar
+        const assistantAvatar = document.querySelector('.assistant-avatar');
+        if (assistantAvatar) {
+            assistantAvatar.classList.add('animate-float');
+        }
+
+        // Add ripple effect to buttons
+        function createRipple(event) {
+            const button = event.currentTarget;
+            const circle = document.createElement('span');
+            const diameter = Math.max(button.clientWidth, button.clientHeight);
+            const radius = diameter / 2;
+
+            circle.style.width = circle.style.height = `${diameter}px`;
+            circle.style.left = `${event.clientX - button.offsetLeft - radius}px`;
+            circle.style.top = `${event.clientY - button.offsetTop - radius}px`;
+            circle.classList.add('ripple');
+
+            const ripple = button.getElementsByClassName('ripple')[0];
+            if (ripple) {
+                ripple.remove();
+            }
+
+            button.appendChild(circle);
+        }
+
+        // Add ripple effect CSS
+        const rippleStyle = document.createElement('style');
+        rippleStyle.textContent = `
+            .ripple {
+                position: absolute;
+                border-radius: 50%;
+                background-color: rgba(255, 255, 255, 0.6);
+                transform: scale(0);
+                animation: ripple-animation 0.6s linear;
+                pointer-events: none;
+            }
+
+            @keyframes ripple-animation {
+                to {
+                    transform: scale(4);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(rippleStyle);
+
+        // Apply ripple effect to buttons
+        const buttons = document.querySelectorAll('.btn, .topic-btn, .action-btn');
+        buttons.forEach(button => {
+            button.style.position = 'relative';
+            button.style.overflow = 'hidden';
+            button.addEventListener('click', createRipple);
+        });
+
+        // Add smooth transitions to suggestion chips
+        const suggestionChips = document.querySelectorAll('.suggestion-chip');
+        suggestionChips.forEach((chip, index) => {
+            chip.style.animationDelay = `${index * 0.1}s`;
+            chip.classList.add('animate-fadeInUp');
+            
+            chip.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-3px) scale(1.05)';
+                this.style.boxShadow = '0 8px 20px rgba(45, 90, 39, 0.2)';
+            });
+            
+            chip.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+                this.style.boxShadow = 'var(--soft-shadow)';
+            });
+        });
+
+        // Initialize Compact Persona Dropdown
+        initializeCompactPersonaDropdown();
+    });
+
+    // Compact Persona Dropdown System
+    function initializeCompactPersonaDropdown() {
+        const dropdownBtn = document.getElementById('personaDropdownBtn');
+        const dropdownContent = document.getElementById('personaDropdownContent');
+        const personaOptions = document.querySelectorAll('.persona-option');
+        const currentPersonaIcon = document.getElementById('currentPersonaIcon');
+        
+        let currentPersona = 'auto';
+        
+        // Toggle dropdown
+        if (dropdownBtn) {
+            dropdownBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                dropdownContent.classList.toggle('show');
+            });
+        }
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function() {
+            if (dropdownContent) {
+                dropdownContent.classList.remove('show');
+            }
+        });
+        
+        // Handle persona selection
+        personaOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                const personaType = this.getAttribute('data-persona');
+                selectPersona(personaType);
+                dropdownContent.classList.remove('show');
+            });
+        });
+        
+        function selectPersona(personaType) {
+            // Remove previous selection
+            personaOptions.forEach(opt => opt.classList.remove('selected'));
+            
+            // Add selection to clicked option
+            const selectedOption = document.querySelector(`[data-persona="${personaType}"]`);
+            if (selectedOption) {
+                selectedOption.classList.add('selected');
+                
+                // Update icon
+                const emoji = selectedOption.querySelector('.persona-emoji').textContent;
+                currentPersonaIcon.textContent = emoji;
+            }
+            
+            currentPersona = personaType;
+            
+            // Update suggestions based on persona
+            updateChatSuggestionsForPersona(personaType);
+            
+            // Show success notification
+            const personaNames = {
+                'auto': 'Auto-Selection',
+                'experienced_traditional': 'राम बाबू (Ram Babu)',
+                'tech_savvy_modern': 'अनिल शर्मा (Anil Sharma)',
+                'small_scale_organic': 'सुमित्रा देवी (Sumitra Devi)',
+                'young_entrepreneur': 'विकास पटेल (Vikas Patel)',
+                'southern_progressive': 'रमेश गौड़ा (Ramesh Gowda)'
+            };
+            
+            showPersonaNotification(`Selected: ${personaNames[personaType]}`, 'success');
+            
+            // Save to localStorage
+            localStorage.setItem('selected_persona', personaType);
+        }
+        
+        // Load saved persona
+        const savedPersona = localStorage.getItem('selected_persona');
+        if (savedPersona) {
+            selectPersona(savedPersona);
+        }
+        
+        // Global access
+        window.getCurrentPersona = () => currentPersona;
+    }
+    
+    function updateChatSuggestionsForPersona(personaType) {
+        const suggestions = document.querySelectorAll('.suggestion-chip');
+        
+        // Define persona-specific suggestions in Hindi-English mix (Indian farmer style)
+        const personaSuggestions = {
+            'auto': [
+                'मेरी फसल में कीड़े लग रहे हैं',
+                'Best season for planting rice',
+                'PM-KISAN scheme कैसे apply करें?',
+                'Organic farming tips'
+            ],
+            'experienced_traditional': [
+                'पारंपरिक तरीकों से गेहूं कैसे उगाएं?',
+                'How to save water in farming?',
+                'बारिश के पानी का संरक्षण कैसे करें?',
+                'Traditional pest control methods'
+            ],
+            'tech_savvy_modern': [
+                'Drip irrigation system लगवाना है',
+                'Best farming apps for Indian farmers',
+                'Precision agriculture techniques',
+                'Weather monitoring technology की जानकारी'
+            ],
+            'small_scale_organic': [
+                'Organic fertilizer कैसे बनाएं?',
+                'Natural pesticides घर पर कैसे बनाएं?',
+                'Kitchen garden planning tips',
+                'Compost making at home'
+            ],
+            'young_entrepreneur': [
+                'Export market opportunities',
+                'Agricultural business loans कैसे लें?',
+                'Value addition in farming',
+                'Digital marketing for farmers'
+            ],
+            'southern_progressive': [
+                'Climate change adaptation strategies',
+                'Research-based farming techniques',
+                'Sustainable agriculture practices',
+                'Scientific soil testing methods'
+            ]
+        };
+        
+        const currentPersona = personaType || window.getCurrentPersona?.() || 'auto';
+        const newSuggestions = personaSuggestions[currentPersona] || personaSuggestions['auto'];
+        
+        suggestions.forEach((suggestion, index) => {
+            if (newSuggestions[index]) {
+                suggestion.textContent = newSuggestions[index];
+                
+                // Add click handler for persona suggestions
+                suggestion.onclick = function() {
+                    document.getElementById('userMessage').value = this.textContent;
+                    sendMessage(this.textContent);
+                };
+            }
+        });
+    }
+
+    function showPersonaNotification(message, type = 'success') {
+        // Remove any existing notifications
+        const existingNotification = document.querySelector('.persona-notification');
+        if (existingNotification) {
+            existingNotification.remove();
+        }
+        
+        const notification = document.createElement('div');
+        notification.className = `persona-notification ${type}`;
+        notification.innerHTML = `
+            <span>🧑‍🌾 ${message}</span>
+            <button class="notification-close">&times;</button>
+        `;
+        
+        // Styling
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 12px 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 10000;
+            max-width: 300px;
+            animation: slideInRight 0.3s ease;
+            border-left: 4px solid ${type === 'success' ? '#2ecc71' : '#e74c3c'};
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        `;
+        
+        document.body.appendChild(notification);
+        
+        // Auto remove after 3 seconds
+        setTimeout(() => {
+            if (notification.parentElement) {
+                notification.style.animation = 'slideOutRight 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }
+        }, 3000);
+        
+        // Manual close
+        notification.querySelector('.notification-close').addEventListener('click', () => {
+            notification.style.animation = 'slideOutRight 0.3s ease';
+            setTimeout(() => notification.remove(), 300);
+        });
+    }
+
+    // Add slideOutRight animation
+    const animationStyle = document.createElement('style');
+    animationStyle.textContent = `
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+    `;
+    document.head.appendChild(animationStyle);
+    
+    function observeNewMessagesForPersona() {
+        const chatbox = document.getElementById('chatbox');
+        if (!chatbox) return;
+        
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                mutation.addedNodes.forEach(function(node) {
+                    if (node.nodeType === 1 && node.classList.contains('message') && node.classList.contains('assistant')) {
+                        addPersonaIndicatorToMessage(node);
+                    }
+                });
+            });
+        });
+        
+        observer.observe(chatbox, { childList: true, subtree: true });
+    }
+    
+    function addPersonaIndicatorToMessage(messageElement) {
+        // Wait for persona system to be loaded
+        setTimeout(() => {
+            if (!window.farmerPersonaSystem) return;
+            
+            const personaType = window.farmerPersonaSystem.currentPersona || 'auto';
+            
+            if (personaType !== 'auto' && window.farmerPersonaSystem.personas[personaType]) {
+                const persona = window.farmerPersonaSystem.personas[personaType];
+                const messageInfo = messageElement.querySelector('.message-info');
+                
+                if (messageInfo) {
+                    const personaIndicator = document.createElement('span');
+                    personaIndicator.className = 'persona-indicator';
+                    personaIndicator.innerHTML = `${persona.avatar} ${persona.name}`;
+                    personaIndicator.style.cssText = `
+                        font-size: 0.8rem;
+                        color: var(--indian-saffron);
+                        margin-left: 10px;
+                        font-weight: 600;
+                        padding: 2px 8px;
+                        background: rgba(255, 153, 51, 0.1);
+                        border-radius: 12px;
+                        border: 1px solid var(--indian-saffron);
+                    `;
+                    messageInfo.appendChild(personaIndicator);
+                }
+            }
+        }, 100);
+    }
+    
+    // Enhanced sendMessage with compact persona context
+    function enhanceSendMessageWithPersona() {
+        const originalSendMessage = window.sendMessage;
+        
+        if (typeof originalSendMessage === 'function') {
+            window.sendMessage = function(message, imageFile = null) {
+                let enhancedMessage = message;
+                
+                // Get current persona
+                const currentPersona = window.getCurrentPersona?.() || 'auto';
+                
+                if (currentPersona !== 'auto') {
+                    // Add persona marker for backend processing
+                    enhancedMessage = `[PERSONA:${currentPersona}] ${message}`;
+                    console.log('🧑‍🌾 Enhanced message with persona:', currentPersona);
+                }
+                
+                return originalSendMessage.call(this, enhancedMessage, imageFile);
+            };
+        } else {
+            // If sendMessage doesn't exist yet, try again later
+            setTimeout(enhanceSendMessageWithPersona, 500);
+        }
+    }
+
+    // Initialize enhanced messaging after a delay to ensure sendMessage exists
+    setTimeout(enhanceSendMessageWithPersona, 1000);
 </script>
 {% endblock %}

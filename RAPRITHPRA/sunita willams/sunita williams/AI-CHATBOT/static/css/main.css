@@ -11,6 +11,17 @@
   --border-color: #ddd;
   --box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   --transition: all 0.3s ease;
+  
+  /* Indian Farmer Persona Colors */
+  --persona-traditional: #8B4513;
+  --persona-modern: #4169E1;
+  --persona-organic: #228B22;
+  --persona-entrepreneur: #FF8C00;
+  --persona-progressive: #9932CC;
+  --indian-saffron: #FF9933;
+  --indian-white: #FFFFFF;
+  --indian-green: #138808;
+  --cultural-gold: #FFD700;
 }
 
 * {
@@ -121,6 +132,465 @@ header {
   opacity: 0.9;
 }
 
+/* Indian Farmer Persona Styling */
+.persona-section {
+  background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+  padding: 40px 0;
+  margin: 30px 0;
+  border-radius: 15px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+}
+
+.persona-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.persona-header h2 {
+  color: var(--indian-green);
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 15px;
+  position: relative;
+}
+
+.persona-header h2::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(90deg, var(--indian-saffron), var(--indian-green));
+  border-radius: 2px;
+}
+
+.persona-header .hindi-text {
+  color: var(--indian-saffron);
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.persona-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 25px;
+  margin-top: 30px;
+}
+
+.persona-card {
+  background: white;
+  border-radius: 15px;
+  padding: 25px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+  border-left: 5px solid var(--primary-color);
+  position: relative;
+  overflow: hidden;
+}
+
+.persona-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100px;
+  height: 100px;
+  background: linear-gradient(45deg, transparent 50%, rgba(255,153,51,0.1) 50%);
+  z-index: 1;
+}
+
+.persona-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+}
+
+.persona-card.traditional {
+  border-left-color: var(--persona-traditional);
+}
+
+.persona-card.modern {
+  border-left-color: var(--persona-modern);
+}
+
+.persona-card.organic {
+  border-left-color: var(--persona-organic);
+}
+
+.persona-card.entrepreneur {
+  border-left-color: var(--persona-entrepreneur);
+}
+
+.persona-card.progressive {
+  border-left-color: var(--persona-progressive);
+}
+
+.persona-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  color: white;
+  margin-bottom: 20px;
+  position: relative;
+  z-index: 2;
+}
+
+.persona-avatar.traditional {
+  background: linear-gradient(135deg, var(--persona-traditional), #A0522D);
+}
+
+.persona-avatar.modern {
+  background: linear-gradient(135deg, var(--persona-modern), #6495ED);
+}
+
+.persona-avatar.organic {
+  background: linear-gradient(135deg, var(--persona-organic), #32CD32);
+}
+
+.persona-avatar.entrepreneur {
+  background: linear-gradient(135deg, var(--persona-entrepreneur), #FFA500);
+}
+
+.persona-avatar.progressive {
+  background: linear-gradient(135deg, var(--persona-progressive), #BA55D3);
+}
+
+.persona-info h3 {
+  color: var(--text-color);
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.persona-info .hindi-name {
+  color: var(--indian-saffron);
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+.persona-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.persona-tag {
+  background: rgba(46, 204, 113, 0.1);
+  color: var(--primary-color);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.persona-specialization {
+  margin-bottom: 15px;
+}
+
+.persona-specialization h4 {
+  color: var(--indian-green);
+  font-size: 1rem;
+  margin-bottom: 8px;
+}
+
+.persona-specialization ul {
+  list-style: none;
+  padding: 0;
+}
+
+.persona-specialization li {
+  padding: 3px 0;
+  padding-left: 20px;
+  position: relative;
+}
+
+.persona-specialization li::before {
+  content: '🌾';
+  position: absolute;
+  left: 0;
+}
+
+.persona-select-btn {
+  width: 100%;
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+}
+
+.persona-select-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
+}
+
+.persona-select-btn.selected {
+  background: linear-gradient(135deg, var(--indian-saffron), var(--cultural-gold));
+  box-shadow: 0 5px 15px rgba(255, 153, 51, 0.3);
+}
+
+/* Government Schemes Section */
+.govt-schemes-section {
+  background: linear-gradient(135deg, #fff 0%, #f0f8ff 100%);
+  padding: 30px;
+  border-radius: 15px;
+  margin: 30px 0;
+  border: 2px solid var(--indian-green);
+}
+
+.govt-schemes-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.govt-schemes-header h3 {
+  color: var(--indian-green);
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.govt-schemes-header .hindi-text {
+  color: var(--indian-saffron);
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.schemes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.scheme-card {
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  border-left: 4px solid var(--indian-green);
+  transition: all 0.3s ease;
+}
+
+.scheme-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.scheme-card h4 {
+  color: var(--indian-green);
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+
+.scheme-card p {
+  color: var(--text-color);
+  font-size: 0.9rem;
+  margin-bottom: 15px;
+}
+
+.scheme-apply-btn {
+  background: var(--indian-saffron);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.scheme-apply-btn:hover {
+  background: var(--cultural-gold);
+  transform: translateY(-1px);
+}
+
+/* Seasonal Advice Section */
+.seasonal-advice-section {
+  background: linear-gradient(135deg, #e8f5e8 0%, #f0fff0 100%);
+  padding: 30px;
+  border-radius: 15px;
+  margin: 30px 0;
+  border: 2px solid var(--primary-color);
+}
+
+.seasonal-header {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.seasonal-header h3 {
+  color: var(--primary-color);
+  font-size: 1.8rem;
+  margin-bottom: 10px;
+}
+
+.seasonal-indicator {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.season-badge {
+  background: var(--primary-color);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 25px;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.seasonal-crops {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.crop-tag {
+  background: rgba(46, 204, 113, 0.1);
+  color: var(--primary-color);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border: 1px solid var(--primary-color);
+}
+
+.seasonal-advice {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+
+.seasonal-advice h4 {
+  color: var(--indian-green);
+  margin-bottom: 15px;
+}
+
+.seasonal-advice ul {
+  list-style: none;
+  padding: 0;
+}
+
+.seasonal-advice li {
+  padding: 8px 0;
+  padding-left: 25px;
+  position: relative;
+}
+
+.seasonal-advice li::before {
+  content: '🌱';
+  position: absolute;
+  left: 0;
+}
+
+/* Cultural Elements */
+.cultural-element {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 15px 0;
+  padding: 15px;
+  background: linear-gradient(135deg, rgba(255,153,51,0.1), rgba(255,215,0,0.1));
+  border-radius: 10px;
+  border-left: 4px solid var(--indian-saffron);
+}
+
+.cultural-element .icon {
+  font-size: 1.5rem;
+  color: var(--indian-saffron);
+}
+
+.cultural-element .text {
+  color: var(--text-color);
+  font-weight: 500;
+}
+
+/* Persona Status Display */
+.persona-status {
+  background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+  border: 2px solid var(--primary-color);
+  border-radius: 15px;
+  padding: 20px;
+  margin: 20px 0;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.persona-status h4 {
+  color: var(--indian-green);
+  margin-bottom: 15px;
+  font-size: 1.3rem;
+}
+
+.current-persona {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.current-persona .avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: white;
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+}
+
+.current-persona .info h5 {
+  color: var(--text-color);
+  margin-bottom: 5px;
+}
+
+.current-persona .info .details {
+  color: var(--indian-saffron);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.persona-settings {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.setting-item {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.setting-item label {
+  color: var(--text-color);
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.setting-item .value {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
 /* Forms */
 .form-group {
   margin-bottom: 20px;
@@ -199,33 +669,6 @@ header {
   background-color: white;
   border-radius: 8px;
   box-shadow: var(--box-shadow);
-}
-
-.auth-header {
-  text-align: center;
-  margin-bottom: 30px;
-}
-
-.auth-title {
-  font-size: 2rem;
-  color: var(--primary-color);
-  margin-bottom: 10px;
-}
-
-.auth-subtitle {
-  color: #666;
-}
-
-.auth-footer {
-  text-align: center;
-  margin-top: 20px;
-  padding-top: 20px;
-  border-top: 1px solid var(--border-color);
-}
-
-.auth-footer a {
-  color: var(--primary-color);
-  text-decoration: none;
 }
 
 /* Dashboard */

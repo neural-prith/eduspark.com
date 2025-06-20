@@ -1,8 +1,12 @@
 {
-  "language": "bn",
+  "language": "ta",
   "response_length": "medium",
   "difficulty_level": "medium",
   "voice_enabled": false,
   "voice_wake_word": "assistant",
-  "theme": "default"
+  "theme": "default",
+  "farmer_persona": "auto",
+  "farming_region": "general",
+  "primary_crops": [],
+  "farming_style": "mixed"
 }

@@ -1,0 +1,545 @@
+{% extends "api_base.html" %}
+
+{% block title %}Supply Chain Management - EDU SPARK{% endblock %}
+
+{% block extra_css %}
+<style>
+    .supply-chain-page {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        padding: 80px 0 40px;
+    }
+
+    .supply-header {
+        text-align: center;
+        margin-bottom: 50px;
+    }
+
+    .supply-header h1 {
+        font-size: 3rem;
+        font-weight: 800;
+        color: var(--primary-dark);
+        margin-bottom: 1rem;
+    }
+
+    .tracking-section {
+        background: white;
+        border-radius: 25px;
+        padding: 35px;
+        margin-bottom: 40px;
+        box-shadow: var(--container-shadow);
+    }
+
+    .tracking-input {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 30px;
+        align-items: end;
+    }
+
+    .input-group {
+        flex: 1;
+    }
+
+    .input-label {
+        font-weight: 600;
+        color: var(--dark-color);
+        margin-bottom: 8px;
+        display: block;
+    }
+
+    .input-field {
+        width: 100%;
+        padding: 15px;
+        border: 2px solid var(--border-color);
+        border-radius: 12px;
+        font-size: 1rem;
+        transition: var(--hover-transition);
+    }
+
+    .input-field:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(45, 90, 39, 0.1);
+    }
+
+    .track-btn {
+        background: var(--gradient-primary);
+        color: white;
+        border: none;
+        padding: 15px 30px;
+        border-radius: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--hover-transition);
+        white-space: nowrap;
+    }
+
+    .track-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--soft-shadow);
+    }
+
+    .tracking-result {
+        background: linear-gradient(135deg, #e8f5e8, #d4edda);
+        border-radius: 20px;
+        padding: 30px;
+        border: 1px solid rgba(45, 90, 39, 0.2);
+        display: none;
+    }
+
+    .result-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+    }
+
+    .batch-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .batch-icon {
+        width: 60px;
+        height: 60px;
+        background: var(--gradient-primary);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.8rem;
+    }
+
+    .batch-details h4 {
+        margin: 0;
+        font-size: 1.5rem;
+        color: var(--dark-color);
+    }
+
+    .batch-details p {
+        margin: 5px 0 0;
+        color: var(--text-light);
+    }
+
+    .status-badge {
+        background: var(--success-color);
+        color: white;
+        padding: 8px 20px;
+        border-radius: 25px;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    .status-badge.in-transit {
+        background: var(--warning-color);
+    }
+
+    .status-badge.delivered {
+        background: var(--success-color);
+    }
+
+    .status-badge.processing {
+        background: var(--info-color);
+    }
+
+    .timeline {
+        position: relative;
+        margin-top: 30px;
+    }
+
+    .timeline::before {
+        content: '';
+        position: absolute;
+        left: 30px;
+        top: 0;
+        bottom: 0;
+        width: 4px;
+        background: var(--border-color);
+        border-radius: 2px;
+    }
+
+    .timeline-item {
+        position: relative;
+        padding-left: 80px;
+        margin-bottom: 30px;
+    }
+
+    .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: 22px;
+        top: 5px;
+        width: 20px;
+        height: 20px;
+        background: var(--success-color);
+        border-radius: 50%;
+        border: 4px solid white;
+        box-shadow: 0 0 0 3px var(--success-color);
+    }
+
+    .timeline-item.pending::before {
+        background: var(--border-color);
+        box-shadow: 0 0 0 3px var(--border-color);
+    }
+
+    .timeline-content {
+        background: white;
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: var(--soft-shadow);
+    }
+
+    .timeline-title {
+        font-weight: 700;
+        color: var(--dark-color);
+        margin-bottom: 8px;
+    }
+
+    .timeline-time {
+        color: var(--text-light);
+        font-size: 0.9rem;
+        margin-bottom: 10px;
+    }
+
+    .timeline-desc {
+        color: var(--text-light);
+        line-height: 1.6;
+    }
+
+    .services-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 30px;
+        margin-bottom: 40px;
+    }
+
+    .service-card {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: var(--container-shadow);
+        transition: var(--hover-transition);
+        border-top: 5px solid var(--primary-color);
+    }
+
+    .service-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 25px 50px rgba(45, 90, 39, 0.15);
+    }
+
+    .service-icon {
+        width: 70px;
+        height: 70px;
+        background: var(--gradient-primary);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 2rem;
+        margin-bottom: 20px;
+    }
+
+    .service-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--dark-color);
+        margin-bottom: 15px;
+    }
+
+    .service-description {
+        color: var(--text-light);
+        line-height: 1.6;
+        margin-bottom: 20px;
+    }
+
+    .service-features {
+        list-style: none;
+        padding: 0;
+        margin-bottom: 25px;
+    }
+
+    .service-features li {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 8px;
+        color: var(--text-light);
+    }
+
+    .service-features i {
+        color: var(--success-color);
+        font-size: 0.9rem;
+    }
+
+    .service-btn {
+        width: 100%;
+        background: var(--gradient-primary);
+        color: white;
+        border: none;
+        padding: 12px;
+        border-radius: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--hover-transition);
+    }
+
+    .service-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--soft-shadow);
+    }
+
+    .cold-chain-map {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        margin-bottom: 40px;
+        box-shadow: var(--container-shadow);
+    }
+
+    .map-header {
+        text-align: center;
+        margin-bottom: 25px;
+    }
+
+    .map-header h3 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--dark-color);
+    }
+
+    .map-placeholder {
+        height: 400px;
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-light);
+        font-size: 1.2rem;
+        border: 2px dashed var(--border-color);
+    }
+
+    @media (max-width: 768px) {
+        .tracking-input {
+            flex-direction: column;
+        }
+        
+        .track-btn {
+            width: 100%;
+        }
+        
+        .result-header {
+            flex-direction: column;
+            gap: 15px;
+            text-align: center;
+        }
+        
+        .services-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="supply-chain-page">
+    <div class="container">
+        <div class="supply-header animate__animated animate__fadeInDown">
+            <h1><i class="fas fa-truck"></i> Supply Chain Management</h1>
+            <p>Track your produce from farm to market. Manage logistics, storage, and distribution with real-time visibility.</p>
+        </div>
+
+        <!-- Tracking Section -->
+        <div class="tracking-section animate__animated animate__fadeInUp">
+            <h3 style="text-align: center; margin-bottom: 30px; color: var(--primary-dark);">
+                <i class="fas fa-search"></i> Track Your Produce
+            </h3>
+            <div class="tracking-input">
+                <div class="input-group">
+                    <label class="input-label">Batch ID / QR Code</label>
+                    <input type="text" class="input-field" id="batchId" placeholder="Enter batch ID or scan QR code">
+                </div>
+                <button class="track-btn" onclick="trackBatch()">
+                    <i class="fas fa-search"></i> Track
+                </button>
+            </div>
+            
+            <div class="tracking-result" id="trackingResult">
+                <div class="result-header">
+                    <div class="batch-info">
+                        <div class="batch-icon">
+                            <i class="fas fa-apple-alt"></i>
+                        </div>
+                        <div class="batch-details">
+                            <h4>Organic Tomatoes - Batch #TOM2024001</h4>
+                            <p>Harvest Date: March 15, 2024 | Quantity: 500 kg</p>
+                        </div>
+                    </div>
+                    <div class="status-badge in-transit">In Transit</div>
+                </div>
+
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <div class="timeline-title">Harvested</div>
+                            <div class="timeline-time">March 15, 2024 - 6:00 AM</div>
+                            <div class="timeline-desc">Organic tomatoes harvested from Farm Block A, Nashik. Quality grade: Premium A+</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <div class="timeline-title">Quality Inspection</div>
+                            <div class="timeline-time">March 15, 2024 - 10:30 AM</div>
+                            <div class="timeline-desc">Passed quality inspection. pH: 4.2, Brix: 5.8, Pesticide residue: None detected</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <div class="timeline-title">Cold Storage</div>
+                            <div class="timeline-time">March 15, 2024 - 2:00 PM</div>
+                            <div class="timeline-desc">Stored in cold storage facility. Temperature: 12°C, Humidity: 85%</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <div class="timeline-title">Dispatched</div>
+                            <div class="timeline-time">March 16, 2024 - 5:00 AM</div>
+                            <div class="timeline-desc">Loaded in refrigerated truck. Driver: Suresh Kumar, Vehicle: MH-12-AB-1234</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item pending">
+                        <div class="timeline-content">
+                            <div class="timeline-title">Delivery Expected</div>
+                            <div class="timeline-time">March 16, 2024 - 8:00 PM</div>
+                            <div class="timeline-desc">Delivery to Mumbai wholesale market. Estimated arrival time.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Services Grid -->
+        <div class="services-grid animate__animated animate__fadeInUp animate__delay-1s">
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-warehouse"></i>
+                </div>
+                <h3 class="service-title">Storage Solutions</h3>
+                <p class="service-description">Find and book storage facilities near you. Cold storage, warehouses, and processing centers.</p>
+                <ul class="service-features">
+                    <li><i class="fas fa-check-circle"></i> Cold storage facilities</li>
+                    <li><i class="fas fa-check-circle"></i> Warehouse booking</li>
+                    <li><i class="fas fa-check-circle"></i> Climate-controlled storage</li>
+                    <li><i class="fas fa-check-circle"></i> Real-time monitoring</li>
+                </ul>
+                <button class="service-btn">Find Storage</button>
+            </div>
+
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-shipping-fast"></i>
+                </div>
+                <h3 class="service-title">Transportation</h3>
+                <p class="service-description">Book reliable transportation for your produce. Refrigerated trucks, logistics partners, and delivery tracking.</p>
+                <ul class="service-features">
+                    <li><i class="fas fa-check-circle"></i> Refrigerated transport</li>
+                    <li><i class="fas fa-check-circle"></i> GPS tracking</li>
+                    <li><i class="fas fa-check-circle"></i> Insured cargo</li>
+                    <li><i class="fas fa-check-circle"></i> Flexible scheduling</li>
+                </ul>
+                <button class="service-btn">Book Transport</button>
+            </div>
+
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-certificate"></i>
+                </div>
+                <h3 class="service-title">Quality Certification</h3>
+                <p class="service-description">Get your produce certified for quality standards. Organic, export quality, and safety certifications.</p>
+                <ul class="service-features">
+                    <li><i class="fas fa-check-circle"></i> Organic certification</li>
+                    <li><i class="fas fa-check-circle"></i> Export quality standards</li>
+                    <li><i class="fas fa-check-circle"></i> Safety compliance</li>
+                    <li><i class="fas fa-check-circle"></i> Digital certificates</li>
+                </ul>
+                <button class="service-btn">Get Certified</button>
+            </div>
+
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-chart-bar"></i>
+                </div>
+                <h3 class="service-title">Market Analytics</h3>
+                <p class="service-description">Real-time market prices, demand forecasting, and trade analytics to maximize your profits.</p>
+                <ul class="service-features">
+                    <li><i class="fas fa-check-circle"></i> Live market prices</li>
+                    <li><i class="fas fa-check-circle"></i> Demand forecasting</li>
+                    <li><i class="fas fa-check-circle"></i> Price alerts</li>
+                    <li><i class="fas fa-check-circle"></i> Trade recommendations</li>
+                </ul>
+                <button class="service-btn">View Analytics</button>
+            </div>
+        </div>
+
+        <!-- Cold Chain Map -->
+        <div class="cold-chain-map animate__animated animate__fadeInUp animate__delay-2s">
+            <div class="map-header">
+                <h3><i class="fas fa-route"></i> Cold Chain Network</h3>
+                <p>Locate cold storage facilities, processing centers, and distribution hubs in your area</p>
+            </div>
+            <div class="map-placeholder">
+                <div style="text-align: center;">
+                    <i class="fas fa-map-marked-alt" style="font-size: 3rem; margin-bottom: 15px;"></i>
+                    <br>Interactive map showing cold chain facilities will be displayed here
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function trackBatch() {
+    const batchId = document.getElementById('batchId').value;
+    const resultDiv = document.getElementById('trackingResult');
+    
+    if (batchId.trim()) {
+        // Simulate API call
+        setTimeout(() => {
+            resultDiv.style.display = 'block';
+            resultDiv.scrollIntoView({ behavior: 'smooth' });
+        }, 1000);
+    } else {
+        alert('Please enter a batch ID or scan QR code');
+    }
+}
+
+// Service button handlers
+document.querySelectorAll('.service-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const serviceTitle = this.closest('.service-card').querySelector('.service-title').textContent;
+        alert(`${serviceTitle} feature will redirect to detailed service page.`);
+    });
+});
+
+// Auto-track demo
+document.getElementById('batchId').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        trackBatch();
+    }
+});
+
+// Add sample batch IDs for demo
+const sampleBatchIds = ['TOM2024001', 'RIC2024002', 'WHE2024003', 'POT2024004'];
+document.getElementById('batchId').addEventListener('focus', function() {
+    if (!this.value) {
+        this.placeholder = `Try: ${sampleBatchIds[Math.floor(Math.random() * sampleBatchIds.length)]}`;
+    }
+});
+</script>
+{% endblock %} 

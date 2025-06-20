@@ -1,0 +1,67 @@
+{% extends "api_base.html" %}
+
+{% block title %}EDU SPARK - ಕನ್ನಡ{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="text-center mb-4">
+                <h1 class="display-4">ಸ್ವಾಗತ EDU SPARK</h1>
+                <p class="lead">This page is available in ಕನ್ನಡ</p>
+                <div class="language-switch mb-3">
+                    <a href="/api_soil_analyzer.html" class="btn btn-outline-primary">View in English</a>
+                </div>
+            </div>
+            
+            <div class="alert alert-info text-center">
+                <h4>Page Under Development</h4>
+                <p>This ಕನ್ನಡ version of the page is currently being developed. Please check back soon!</p>
+                <div class="mt-3">
+                    <a href="/api_index_kannada.html" class="btn btn-primary me-2">ಪ್ರಾರಂಭಿಸಿ</a>
+                    <a href="/api_chat_kannada.html" class="btn btn-success">AI ಸಹಾಯಕ</a>
+                </div>
+            </div>
+            
+            <div class="row mt-5">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-language"></i> Language Support</h5>
+                        </div>
+                        <div class="card-body">
+                            <p>EDU SPARK supports multiple Indian languages to make agricultural knowledge accessible to all farmers.</p>
+                            <div class="language-links">
+                                <a href="/api_index.html" class="badge bg-primary me-1">English</a>
+                                <a href="/api_index_hindi.html" class="badge bg-success me-1">हिंदी</a>
+                                <a href="/api_index_bengali.html" class="badge bg-info me-1">বাংলা</a>
+                                <a href="/api_index_tamil.html" class="badge bg-warning me-1">தமிழ்</a>
+                                <a href="/api_index_telugu.html" class="badge bg-danger me-1">తెలుగు</a>
+                                <a href="/api_index_marathi.html" class="badge bg-dark me-1">मराठी</a>
+                                <a href="/api_index_kannada.html" class="badge bg-secondary me-1">ಕನ್ನಡ</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-tools"></i> Available Features</h5>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-leaf text-success"></i> Plant Disease Detection</li>
+                                <li><i class="fas fa-robot text-primary"></i> AI Assistant</li>
+                                <li><i class="fas fa-chart-line text-info"></i> Market Prediction</li>
+                                <li><i class="fas fa-cloud-rain text-warning"></i> Weather Forecast</li>
+                                <li><i class="fas fa-seedling text-success"></i> Soil Analysis</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

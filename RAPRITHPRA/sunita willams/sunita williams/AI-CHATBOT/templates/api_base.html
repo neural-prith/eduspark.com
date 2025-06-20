@@ -19,25 +19,36 @@
     <!-- Animation Library -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     
+    <!-- Custom CSS with Persona Styling -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    
     <style>
         :root {
-            --primary-color: #2e7d32; /* Darker green */
-            --primary-light: #4caf50; /* Medium green */
-            --primary-dark: #1b5e20; /* Very dark green */
-            --secondary-color: #8bc34a; /* Light green */
-            --tertiary-color: #dcedc8; /* Very light green */
-            --dark-color: #263238; /* Dark blue-gray */
-            --text-color: #37474f; /* Medium blue-gray */
-            --text-light: #78909c; /* Light blue-gray */
-            --light-color: #f5f7fa; /* Light gray with blue tint */
-            --border-color: #e0e0e0;
-            --danger-color: #d32f2f;
-            --success-color: #388e3c;
-            --warning-color: #f57c00;
-            --info-color: #0288d1;
-            --container-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-            --hover-transition: all 0.3s ease;
-            --navbar-color: #0b4d0b; /* New darker green for navbar */
+            --primary-color: #2d5a27; /* Soothing forest green */
+            --primary-light: #52b788; /* Soft medium green */
+            --primary-dark: #1a3d15; /* Deep forest green */
+            --secondary-color: #95d5b2; /* Gentle mint green */
+            --tertiary-color: #d8f3dc; /* Very soft green */
+            --quaternary-color: #40916c; /* Professional green */
+            --accent-color: #74c69d; /* Fresh accent green */
+            --dark-color: #2d3748; /* Warm dark gray */
+            --text-color: #2a4338; /* Forest green text */
+            --text-light: #6b7280; /* Soft gray */
+            --light-color: #f8fdf9; /* Subtle green-tinted white */
+            --border-color: #e2e8f0;
+            --danger-color: #e53e3e;
+            --success-color: #38a169;
+            --warning-color: #d69e2e;
+            --info-color: #3182ce;
+            --container-shadow: 0 20px 40px rgba(45, 90, 39, 0.08);
+            --soft-shadow: 0 4px 12px rgba(45, 90, 39, 0.1);
+            --hover-transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            --navbar-color: linear-gradient(135deg, #1a3d15 0%, #2d5a27 100%);
+            --glass-bg: rgba(255, 255, 255, 0.15);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --gradient-primary: linear-gradient(135deg, #52b788 0%, #40916c 100%);
+            --gradient-secondary: linear-gradient(135deg, #95d5b2 0%, #74c69d 100%);
+            --gradient-tertiary: linear-gradient(135deg, #d8f3dc 0%, #b7e4c7 100%);
         }
         
         * {
@@ -50,12 +61,34 @@
             font-family: 'Poppins', sans-serif;
             line-height: 1.6;
             color: var(--text-color);
-            background-color: transparent;
+            background: linear-gradient(135deg, #f8fdf9 0%, #e8f5e8 50%, #d8f3dc 100%);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             position: relative;
             z-index: 1;
+            overflow-x: hidden;
+        }
+
+        /* Beautiful animated background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(45, 90, 39, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(116, 198, 157, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 40% 60%, rgba(149, 213, 178, 0.03) 0%, transparent 50%);
+            z-index: -1;
+            animation: backgroundShift 20s ease-in-out infinite alternate;
+        }
+
+        @keyframes backgroundShift {
+            0% { transform: translateX(0) translateY(0) rotate(0deg); }
+            100% { transform: translateX(-2%) translateY(-2%) rotate(1deg); }
         }
         
         main {
@@ -110,18 +143,36 @@
         }
         
         .card {
-            background-color: rgba(255, 255, 255, 0.95);
-            border-radius: 16px;
-            box-shadow: var(--container-shadow), 0 0 20px rgba(76, 175, 80, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 20px;
+            box-shadow: var(--container-shadow);
+            transition: var(--hover-transition);
             overflow: hidden;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(76, 175, 80, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(45, 90, 39, 0.1);
+            position: relative;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-primary);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover::before {
+            transform: scaleX(1);
         }
         
         .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15), 0 0 25px rgba(76, 175, 80, 0.2);
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(45, 90, 39, 0.15);
+            border-color: rgba(45, 90, 39, 0.2);
         }
         
         .card-header {
@@ -139,18 +190,127 @@
             padding: 1.5rem;
         }
         
-        /* Navbar */
+        /* Enhanced Navbar */
         .navbar {
-            background-color: var(--navbar-color) !important;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-            padding: 0.5rem 0;
+            background: var(--navbar-color) !important;
+            box-shadow: 0 8px 32px rgba(45, 90, 39, 0.2);
+            padding: 0.75rem 0;
             position: sticky;
             top: 0;
             z-index: 1000;
-            backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
-            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            transition: var(--hover-transition);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
         }
+
+        .navbar::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--gradient-secondary);
+            transform: scaleX(0);
+            animation: navbarLoad 2s ease-out 0.5s forwards;
+        }
+
+        @keyframes navbarLoad {
+            to { transform: scaleX(1); }
+        }
+
+        /* Modern Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.05); }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes glow {
+            from { box-shadow: 0 0 5px rgba(45, 90, 39, 0.5); }
+            to { box-shadow: 0 0 20px rgba(45, 90, 39, 0.8), 0 0 30px rgba(45, 90, 39, 0.6); }
+        }
+
+        /* Animation Classes */
+        .animate-fadeInUp {
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .animate-slideInLeft {
+            animation: slideInLeft 0.8s ease-out;
+        }
+
+        .animate-slideInRight {
+            animation: slideInRight 0.8s ease-out;
+        }
+
+        .animate-bounceIn {
+            animation: bounceIn 0.8s ease-out;
+        }
+
+        .animate-pulse {
+            animation: pulse 2s infinite;
+        }
+
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .animate-glow {
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        /* Staggered animations */
+        .animate-delay-100 { animation-delay: 0.1s; }
+        .animate-delay-200 { animation-delay: 0.2s; }
+        .animate-delay-300 { animation-delay: 0.3s; }
+        .animate-delay-400 { animation-delay: 0.4s; }
+        .animate-delay-500 { animation-delay: 0.5s; }
         
         .navbar .container {
             padding-left: 0; /* Remove left padding to push logo to edge */
@@ -330,45 +490,99 @@
         }
         
         .btn-primary {
-            background-color: var(--primary-color);
+            background: var(--gradient-primary);
             color: white;
-            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+            box-shadow: var(--soft-shadow);
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
         }
         
         .btn-primary:hover {
-            background-color: var(--primary-light);
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(46, 125, 50, 0.4);
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 12px 24px rgba(45, 90, 39, 0.3);
         }
         
         .btn-primary:active {
-            transform: translateY(-1px);
+            transform: translateY(-2px) scale(1.02);
         }
         
         .btn-secondary {
-            background-color: var(--secondary-color);
-            color: white;
-            box-shadow: 0 4px 12px rgba(139, 195, 74, 0.3);
+            background: var(--gradient-secondary);
+            color: var(--dark-color);
+            box-shadow: var(--soft-shadow);
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-secondary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .btn-secondary:hover::before {
+            left: 100%;
         }
         
         .btn-secondary:hover {
-            background-color: #97c95f;
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(139, 195, 74, 0.4);
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 12px 24px rgba(149, 213, 178, 0.4);
         }
         
         .btn-outline {
-            background-color: transparent;
+            background: transparent;
             border: 2px solid var(--primary-color);
             color: var(--primary-color);
             padding: 10px 23px;
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+            transition: var(--hover-transition);
+        }
+
+        .btn-outline::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 100%;
+            background: var(--gradient-primary);
+            transition: width 0.4s ease;
+            z-index: -1;
+        }
+        
+        .btn-outline:hover::before {
+            width: 100%;
         }
         
         .btn-outline:hover {
-            background-color: var(--primary-color);
             color: white;
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(46, 125, 50, 0.2);
+            border-color: transparent;
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 8px 20px rgba(45, 90, 39, 0.3);
         }
         
         .btn-danger {
@@ -954,33 +1168,44 @@
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="featuresDropdown">
                             <li>
+                                <a class="dropdown-item" href="/api_smart_farm_management.html">
+                                    <i class="fas fa-microchip me-1"></i>Smart Farm Management
+                                </a>
+                            </li>
+
+                            <li>
+                                <a class="dropdown-item" href="/api_marketplace.html">
+                                    <i class="fas fa-store me-1"></i>Farmers Marketplace
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="/api_financial_services.html">
+                                    <i class="fas fa-coins me-1"></i>Financial Services
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="/api_community_forum.html">
+                                    <i class="fas fa-users me-1"></i>Community Forum
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="/api_supply_chain.html">
+                                    <i class="fas fa-truck me-1"></i>Supply Chain
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="/api_analytics_dashboard.html">
+                                    <i class="fas fa-chart-bar me-1"></i>Analytics Dashboard
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="/api_satellite_insights.html">
+                                    <i class="fas fa-satellite me-1"></i>Satellite Insights
+                                </a>
+                            </li>
+                            <li>
                                 <a class="dropdown-item" href="/api_crop_yield.html">
                                     <i class="fas fa-chart-line me-1"></i>Crop Yield Prediction
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="/api_farmer_community.html">
-                                    <i class="fas fa-users me-1"></i>Farmer Community Hub
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="/api_course_finder.html">
-                                    <i class="fas fa-search me-1"></i>Course Finder
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="/api_industry_connections.html">
-                                    <i class="fas fa-industry me-1"></i>Industry Connections
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="/api_progress_tracker.html">
-                                    <i class="fas fa-tasks me-1"></i>Progress Tracker
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="/api_scholarships.html">
-                                    <i class="fas fa-graduation-cap me-1"></i>Scholarships
                                 </a>
                             </li>
                             <li>
@@ -990,7 +1215,7 @@
                             </li>
                             <li>
                                 <a class="dropdown-item" href="/api_weather_forecast.html">
-                                    <i class="fas fa-cloud-sun me-1"></i>Weather Forecast
+                                    <i class="fas fa-cloud-rain me-1"></i>Weather Forecast
                                 </a>
                             </li>
                         </ul>
@@ -1017,10 +1242,10 @@
                     
                     <!-- Auth buttons -->
                     <div class="d-flex animate__animated animate__fadeInRight">
-                        <a href="/api_login.html" class="btn btn-outline-light me-1" id="loginBtn" style="padding: 2px 5px; font-size: 0.75rem;">
+                        <a href="/api_login_enhanced.html" class="btn btn-outline-light me-1" id="loginBtn" style="padding: 2px 5px; font-size: 0.75rem;">
                             <i class="fas fa-sign-in-alt me-1" style="font-size: 0.75rem;"></i>Login
                         </a>
-                        <a href="/api_signup.html" class="btn btn-light btn-sm" id="signupBtn" style="font-weight: 500; padding: 2px 4px; font-size: 0.7rem;">
+                        <a href="/api_signup_enhanced.html" class="btn btn-light btn-sm" id="signupBtn" style="font-weight: 500; padding: 2px 4px; font-size: 0.7rem;">
                             <i class="fas fa-user-plus me-1" style="font-size: 0.7rem;"></i>Sign Up
                         </a>
                     </div>
@@ -1057,6 +1282,7 @@
                         <li><a href="/api_chat.html"><i class="fas fa-angle-right"></i> Chat Assistant</a></li>
                         <li><a href="/api_plant_disease.html"><i class="fas fa-angle-right"></i> Disease Detection</a></li>
                         <li><a href="/api_market_prediction.html"><i class="fas fa-angle-right"></i> Market Prediction</a></li>
+                        <li><a href="/api_satellite_insights.html"><i class="fas fa-angle-right"></i> Satellite Insights</a></li>
                         <li><a href="/api_soil_analyzer.html"><i class="fas fa-angle-right"></i> Soil Analyzer</a></li>
                         <li><a href="/api_weather_forecast.html"><i class="fas fa-angle-right"></i> Weather Forecast</a></li>
                         <li><a href="/api_dashboard.html"><i class="fas fa-angle-right"></i> Dashboard</a></li>
